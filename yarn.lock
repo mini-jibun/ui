@@ -414,6 +414,11 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
 
+"@open-ayame/ayame-web-sdk@^2022.1.0":
+  version "2022.1.0"
+  resolved "https://registry.yarnpkg.com/@open-ayame/ayame-web-sdk/-/ayame-web-sdk-2022.1.0.tgz#8b463e81aff436c04fd05152f474bd04287bdf3a"
+  integrity sha512-WPPqQTfGmOVcJUOR87lxNbUpwtIZVbzwrk9DqoSGh/hhtmDPuVU3GUzyNR1CUdxtFDVI8sS7VhWVyIOfWIqCrQ==
+
 "@reach/observe-rect@^1.1.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
