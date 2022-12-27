@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import * as AyameWebSdk from '@open-ayame/ayame-web-sdk';
 
 export type Props = {
-    signalingUrl: string
-    signalingKey: string;
-    roomId: string;
+  signalingUrl: string;
+  signalingKey: string;
+  roomId: string;
 }
 
 // 参考にしました:
@@ -13,31 +13,50 @@ export type Props = {
 // 非同期通信を用いたvideoエレメントの埋め込み (useEffect)
 // https://qiita.com/sotabkw/items/028800170aa17789b26e
 const Ayame = (props: Props) => {
-    const streamRef = React.useRef<HTMLVideoElement>(null);
-    useEffect(() => {
-        (async () => {
-            const conn = AyameWebSdk.connection(props.signalingUrl, props.roomId, Object.assign(AyameWebSdk.defaultOptions, { signalingKey: props.signalingKey }));
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-            conn.connect(mediaStream);
-            conn.on('open', console.log);
-            conn.on('disconnect', (e: any) => {
-                streamRef.current!.srcObject = null;
-            });
-            conn.on('addstream', (e: any) => {
-                streamRef.current!.srcObject = e.stream;
-                streamRef.current!.play();
-            });
-        })();
-    }, []);
+  const streamRef = React.useRef<HTMLVideoElement>(null);
+  const [serialDataChannel, setSerialDataChannel] = React.useState<RTCDataChannel | null>(null);
+  const [servoDataChannel, setServoDataChannel] = React.useState<RTCDataChannel | null>(null);
+  const [serialBody, setSerialBody] = React.useState<any>(null);
 
-    return (
-        <div className='Ayame'>
-            <video
-                ref={streamRef}
-                autoPlay
-                playsInline
-            />
-        </div>
-    );
+  useEffect(() => {
+    (async () => {
+      const conn = AyameWebSdk.connection(props.signalingUrl, props.roomId, Object.assign(AyameWebSdk.defaultOptions, { signalingKey: props.signalingKey }));
+      conn.on('open', async (e: any) => {
+        const serial = await conn.createDataChannel('serial');
+        const servo = await conn.createDataChannel('servo');
+
+        if (serial != null) {
+          serial!.onmessage = (e) => {
+            console.log(e);
+          };
+          setSerialDataChannel(serial);
+        }
+
+        if (servo != null) {
+          setServoDataChannel(servo);
+        }
+      });
+      conn.on('disconnect', (e: any) => {
+        streamRef.current!.srcObject = null;
+      });
+      conn.on('addstream', async (e: any) => {
+        streamRef.current!.srcObject = e.stream;
+        await streamRef.current!.play();
+      });
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+      conn.connect(mediaStream);
+    })();
+  }, []);
+
+  return (
+    <div className='Ayame'>
+      <video
+        ref={streamRef}
+        autoPlay
+        playsInline
+      />
+    </div>
+  );
 };
 export default Ayame;

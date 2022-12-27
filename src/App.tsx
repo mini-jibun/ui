@@ -3,44 +3,47 @@ import Logo from './assets/logo.png'
 import './App.css'
 import { useSearchParams } from 'react-router-dom';
 import Ayame from './Ayame';
-import { TopNavigation } from '@cloudscape-design/components';
+import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
 import SignalingModal from './Modal/Signaling';
-import { onInputEntryChange } from './Modal/InputEntry';
 
 type HeaderProps = {
   signalingUrl: string;
   signalingKey?: string;
   roomId?: string;
-  onSignalingUrl: onInputEntryChange;
-  onSignalingKey: onInputEntryChange;
-  onRoomId: onInputEntryChange;
-};
+  onDropdownMenuItem: (detail: ButtonDropdownProps.ItemClickDetails) => void;
+}
 
 const Header = (props: HeaderProps) => {
-  const [isSignalingSetting, setIsSignalingSetting] = React.useState(false);
-
-  const handleDropdownMenu = (id: string) => {
-    console.log(id);
-    if (id == "signaling") setIsSignalingSetting(true);
-  };
-
   return (
-    <>
-      <TopNavigation
-        identity={{
-          href: `/?signalingKey=${props.signalingKey}&roomId=${props.roomId}`,
-          title: "mini-me ui",
-          logo: {
-            src: Logo,
-            alt: "mini-me ui"
-          }
-        }}
-        i18nStrings={{
-          overflowMenuTriggerText: "More",
-          overflowMenuTitleText: "All"
-        }}
-      />
-    </>
+    <TopNavigation
+      identity={{
+        href: `/?signalingKey=${props.signalingKey}&roomId=${props.roomId}`,
+        title: "mini-me",
+        logo: {
+          src: Logo,
+          alt: "mini-me"
+        }
+      }}
+      i18nStrings={{
+        overflowMenuTriggerText: "More",
+        overflowMenuTitleText: "All"
+      }}
+      utilities={[
+        {
+          type: "menu-dropdown",
+          iconName: "settings",
+          ariaLabel: "設定",
+          title: "設定",
+          items: [
+            {
+              id: "settings-signaling",
+              text: "シグナリング設定"
+            }
+          ],
+          onItemClick: ({ detail }) => { props.onDropdownMenuItem(detail) }
+        }
+      ]}
+    />
   );
 };
 
@@ -52,6 +55,7 @@ const App = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [signalingUrl, setSignalingUrl] = React.useState('wss://ayame-labo.shiguredo.app/signaling');
   const [query, setQuery] = React.useState(new Map(searchParams.entries()));
+  const [visibleSignalingSetting, setVisibleSignalingSetting] = React.useState(false);
 
   const onSignalingUrl = (url: string) => {
     setSignalingUrl(url);
@@ -65,9 +69,27 @@ const App = () => {
     setSearchParams(Object.fromEntries(query));
   };
 
+  const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
+    switch (detail.id) {
+      case "settings-signaling":
+        setVisibleSignalingSetting(true);
+        break;
+      default:
+        console.error(`${detail.id} in DropdownMenu is not implemented yet!`);
+    }
+  };
+
   return (
     <div className="App">
       <Header
+        signalingUrl={signalingUrl}
+        signalingKey={query.get('signalingKey')}
+        roomId={query.get('roomId')}
+        onDropdownMenuItem={onDropdownMenuItem}
+      />
+      <SignalingModal
+        visible={visibleSignalingSetting}
+        setVisible={setVisibleSignalingSetting}
         signalingUrl={signalingUrl}
         signalingKey={query.get('signalingKey')}
         roomId={query.get('roomId')}
@@ -75,15 +97,6 @@ const App = () => {
         onSignalingKey={onSignalingKey}
         onRoomId={onRoomId}
       />
-      <SignalingModal
-        visible={query.get('signalingKey') === undefined || query.get('roomId') === undefined}
-        signalingUrl={signalingUrl}
-        signalingKey={query.get('signalingKey')}
-        roomId={query.get('roomId')}
-        onSignalingUrl={onSignalingUrl}
-        onSignalingKey={onSignalingKey}
-        onRoomId={onRoomId}
-      ></SignalingModal>
       <Ayame
         signalingUrl={signalingUrl}
         signalingKey={query.get('signalingKey')!}
