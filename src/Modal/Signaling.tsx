@@ -6,18 +6,18 @@ export type SignalingModalProps = {
   visible: boolean;
   setVisible: (visible: boolean) => void;
   signalingUrl: string;
-  signalingKey?: string;
-  roomId?: string;
-  onSignalingUrl: (state: string) => void;
-  onSignalingKey: (state: string) => void;
-  onRoomId: (state: string) => void;
+  signalingKey: string;
+  roomId: string;
+  onSignalingUrl: (value: string) => void;
+  onSignalingKey: (value: string) => void;
+  onRoomId: (value: string) => void;
 };
 
 // https://cloudscape.design/components/modal/?tabId=playground
 const SignalingModal = (props: SignalingModalProps) => {
-  const [signalingUrl, setSignalingUrl] = React.useState(props.signalingUrl || '');
-  const [signalingKey, setSignalingkey] = React.useState(props.signalingKey || '');
-  const [roomId, setRoomId] = React.useState(props.roomId || '');
+  const [signalingUrl, setSignalingUrl] = React.useState(props.signalingUrl);
+  const [signalingKey, setSignalingkey] = React.useState(props.signalingKey);
+  const [roomId, setRoomId] = React.useState(props.roomId);
 
   const cancel = () => {
     props.setVisible(false);

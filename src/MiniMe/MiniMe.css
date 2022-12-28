@@ -1,0 +1,30 @@
+.MiniMeConnection {
+  background-color: black;
+  flex: auto;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+参考
+https://localhost8888.net/css/260/
+*/
+.MiniMeConnection>video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ServoJoyStick {
+  position: absolute;
+  left: 2%;
+  top: 50%;
+  opacity: 0.5;
+}
+
+.SerialJoyStick {
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  opacity: 0.5;
+}

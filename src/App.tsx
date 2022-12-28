@@ -2,14 +2,14 @@ import React from 'react'
 import Logo from './assets/logo.png'
 import './App.css'
 import { useSearchParams } from 'react-router-dom';
-import Ayame from './Ayame';
+import MiniMe from './MiniMe/MiniMe';
 import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
 import SignalingModal from './Modal/Signaling';
 
 type HeaderProps = {
   signalingUrl: string;
-  signalingKey?: string;
-  roomId?: string;
+  signalingKey: string;
+  roomId: string;
   onDropdownMenuItem: (detail: ButtonDropdownProps.ItemClickDetails) => void;
 }
 
@@ -40,7 +40,7 @@ const Header = (props: HeaderProps) => {
               text: "シグナリング設定"
             }
           ],
-          onItemClick: ({ detail }) => { props.onDropdownMenuItem(detail) }
+          onItemClick: ({ detail }) => { props.onDropdownMenuItem(detail); }
         }
       ]}
     />
@@ -52,21 +52,24 @@ const Header = (props: HeaderProps) => {
 // TopNavigation
 // https://cloudscape.design/components/top-navigation/?tabId=playground
 const App = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, _] = useSearchParams();
   const [signalingUrl, setSignalingUrl] = React.useState('wss://ayame-labo.shiguredo.app/signaling');
-  const [query, setQuery] = React.useState(new Map(searchParams.entries()));
+  const [signalingKey, setSignalingKey] = React.useState(searchParams.get('signalingKey') || '');
+  const [roomId, setRoomId] = React.useState(searchParams.get('roomId') || '');
   const [visibleSignalingSetting, setVisibleSignalingSetting] = React.useState(false);
 
   const onSignalingUrl = (url: string) => {
     setSignalingUrl(url);
   };
   const onSignalingKey = (key: string) => {
-    setQuery(query.set('signalingKey', key));
-    setSearchParams(Object.fromEntries(query));
+    setSignalingKey(key);
   };
   const onRoomId = (id: string) => {
-    setQuery(query.set('roomId', id));
-    setSearchParams(Object.fromEntries(query));
+    setRoomId(id);
+  };
+
+  const isReady = () => {
+    return signalingKey !== '' && roomId !== '';
   };
 
   const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
@@ -83,24 +86,28 @@ const App = () => {
     <div className="App">
       <Header
         signalingUrl={signalingUrl}
-        signalingKey={query.get('signalingKey')}
-        roomId={query.get('roomId')}
+        signalingKey={signalingKey}
+        roomId={roomId}
         onDropdownMenuItem={onDropdownMenuItem}
       />
       <SignalingModal
-        visible={visibleSignalingSetting}
+        visible={visibleSignalingSetting || !isReady()}
         setVisible={setVisibleSignalingSetting}
         signalingUrl={signalingUrl}
-        signalingKey={query.get('signalingKey')}
-        roomId={query.get('roomId')}
+        signalingKey={signalingKey}
+        roomId={roomId}
         onSignalingUrl={onSignalingUrl}
         onSignalingKey={onSignalingKey}
         onRoomId={onRoomId}
       />
-      <Ayame
+      <MiniMe
+        onConnected={() => {}}
+        onFailed={() => {}}
+        onMessage={() => {}}
+        ready={isReady()}
         signalingUrl={signalingUrl}
-        signalingKey={query.get('signalingKey')!}
-        roomId={query.get('roomId')!}
+        signalingKey={signalingKey}
+        roomId={roomId}
       />
     </div>
   );

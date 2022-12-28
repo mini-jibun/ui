@@ -4,20 +4,3 @@
   display: flex;
   flex-flow: column;
 }
-
-.Ayame {
-  background-color: black;
-  flex: auto;
-  width: 100%;
-  height: 100%;
-}
-
-/*
-参考
-https://localhost8888.net/css/260/
-*/
-.Ayame>video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
