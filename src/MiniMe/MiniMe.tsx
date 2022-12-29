@@ -10,6 +10,7 @@ export interface Props {
   signalingUrl: string;
   signalingKey: string;
   roomId: string;
+  onFailed: () => void;
   onMessage: (data: string) => void;
 }
 
@@ -95,9 +96,10 @@ const MiniMe = (props: Props) => {
         });
 
         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-        conn.connect(mediaStream);
+        await conn.connect(mediaStream);
       } catch (e) {
         isConnectingRef.current = false;
+        props.onFailed();
         throw e;
       }
     })();
