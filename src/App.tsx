@@ -6,7 +6,7 @@ import MiniMe from './MiniMe/MiniMe';
 import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
 import SignalingModal from './Modal/Signaling';
 
-type HeaderProps = {
+interface HeaderProps {
   signalingUrl: string;
   signalingKey: string;
   roomId: string;
@@ -102,7 +102,7 @@ const App = () => {
       />
       <MiniMe
         onConnected={() => {}}
-        onFailed={() => {}}
+        onFailed={() => {setVisibleSignalingSetting(true)}}
         onMessage={() => {}}
         ready={isReady()}
         signalingUrl={signalingUrl}
@@ -113,4 +113,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;

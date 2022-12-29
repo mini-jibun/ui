@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, SpaceBetween, Input, InputProps } from '@cloudscape-design/components';
 
-type InputEntryProps = {
+interface InputEntryProps {
   value: string;
   title: string;
   onChange: (state: string) => void;

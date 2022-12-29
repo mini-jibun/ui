@@ -1,10 +1,11 @@
 import React from 'react';
-import { Joystick } from 'react-joystick-component';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
-import './MiniMe.css';
+import Connection from '@open-ayame/ayame-web-sdk/dist/connection';
+import { Joystick } from 'react-joystick-component';
 import { IJoystickUpdateEvent } from 'react-joystick-component/build/lib/Joystick';
+import './MiniMe.css';
 
-export type Props = {
+export interface Props {
   ready: boolean;
   signalingUrl: string;
   signalingKey: string;
@@ -19,8 +20,8 @@ export type Props = {
 // https://github.com/OpenAyame/ayame-web-sdk/blob/develop/src/connection/base.ts
 // TypeScriptで交差型を定義する方法
 // https://js.studio-kingdom.com/typescript/handbook/advanced_types
-type AyameDisconnectEvent = { reason: string };
-type AyameOpenEvent = { authzMetaData: any };
+interface AyameDisconnectEvent { reason: string }
+interface AyameOpenEvent { authzMetaData: any }
 type AyameRTCTrackEvent = { stream: MediaStream } & RTCTrackEvent;
 
 // 参考にしました:
@@ -29,18 +30,18 @@ type AyameRTCTrackEvent = { stream: MediaStream } & RTCTrackEvent;
 // 非同期通信を用いたvideoエレメントの埋め込み (useEffect)
 // https://qiita.com/sotabkw/items/028800170aa17789b26e
 const MiniMe = (props: Props) => {
-  const streamRef = React.useRef<HTMLVideoElement>(null);
-  const [serialDataChannel, setSerialDataChannel] = React.useState<RTCDataChannel | null>(null);
-  const [servoDataChannel, setServoDataChannel] = React.useState<RTCDataChannel | null>(null);
+  const streamRef = React.useRef<HTMLVideoElement | null>(null);
+  const connectionRef = React.useRef<Connection | null>(null);
+  const serialDataChannelRef = React.useRef<RTCDataChannel | null>(null);
+  const servoDataChannelRef = React.useRef<RTCDataChannel | null>(null);
 
   // 参考にしました:
   // 特定の範囲を特定の範囲に変換する処理
   // https://www.arduino.cc/reference/en/language/functions/math/map/
   const map = (value: number, in_min: number, in_max: number, out_min: number, out_max: number) => Math.trunc((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 
-
   const onSerialJoyStick = (event: IJoystickUpdateEvent) => {
-    if (serialDataChannel === null) return;
+    if (serialDataChannelRef.current === null) return;
 
     // 参考にしました:
     // 2輪ロボットの数学的モデル
@@ -51,64 +52,57 @@ const MiniMe = (props: Props) => {
 
     const velocity = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     const radian = Math.acos(x / velocity);
-    const degree = radian * (180 / Math.PI);
-    const dutyLeft = isNaN(radian) ? 0 : Math.sign(y) * (velocity + d * (Math.PI / 2 - radian));
-    const dutyRight = isNaN(radian) ? 0 : Math.sign(y) * (velocity - d * (Math.PI / 2 - radian));
+    const _left = isNaN(radian) ? 0 : Math.sign(y) * (velocity + d * (Math.PI / 2 - radian));
+    const _right = isNaN(radian) ? 0 : Math.sign(y) * (velocity - d * (Math.PI / 2 - radian));
 
-    const actualDutyLeft = map(dutyLeft, -180, 180, -255, 255);
-    const actualDutyRight = map(dutyRight, -180, 180, -255, 255);
+    const left = map(_left, -180, 180, -255, 255);
+    const right = map(_right, -180, 180, -255, 255);
 
-    console.log('serial: ', x, ',', y);
-    console.log('serial(duty):', dutyLeft, ',', dutyRight);
-    console.log('serial(actualDuty):', actualDutyLeft, ',', actualDutyRight);
-
-    serialDataChannel.send(new TextEncoder().encode(`${actualDutyLeft},${actualDutyRight}$`));
+    serialDataChannelRef.current.send(new TextEncoder().encode(`${left},${right}$`));
   };
 
   const onServoJoyStick = (event: IJoystickUpdateEvent) => {
-    if (servoDataChannel === null) return;
+    if (servoDataChannelRef.current === null) return;
 
-    const x = event.x! * 100;
-    const y = event.y! * 100;
+    const x = map(event.x! * 100, -100, 100, 0, 180);
+    const y = map(event.y! * 100, -100, 100, 0, 180);
 
-    const actualX = map(x, -180, 180, 0, 180);
-    const actualY = map(y, -180, 180, 0, 180);
-
-    console.log('servo: ', x, ',', y);
-    console.log('servo(actual):', actualX, ',', actualY);
-
-    servoDataChannel.send(new TextEncoder().encode(`${actualX},${actualY}`));
+    servoDataChannelRef.current.send(new TextEncoder().encode(`${x},${y}`));
   };
 
+  // 参考にしました:
+  // useEffectが2回実行される対策
+  // https://b.0218.jp/202207202243.html
   React.useEffect(() => {
     (async () => {
-      if (!props.ready) return;
+      if (!props.ready || connectionRef.current !== null) return;
       try {
-        const conn = Ayame.connection(props.signalingUrl, props.roomId, Object.assign(Ayame.defaultOptions, { signalingKey: props.signalingKey }));
-        conn.on('open', async (e: AyameOpenEvent) => {
-          const serial = await conn.createDataChannel('serial');
-          const servo = await conn.createDataChannel('servo');
+        const opt = Object.assign(Ayame.defaultOptions, { signalingKey: props.signalingKey });
+        connectionRef.current = Ayame.connection(props.signalingUrl, props.roomId, opt);
 
-          if (serial != null) {
-            setSerialDataChannel(serial);
-          }
-          if (servo != null) {
-            setServoDataChannel(servo);
-          }
+        connectionRef.current.on('open', async (e: AyameOpenEvent) => {
+          serialDataChannelRef.current = await connectionRef.current!.createDataChannel('serial');
+          servoDataChannelRef.current = await connectionRef.current!.createDataChannel('servo');
+          console.log('opened!');
         });
-        conn.on('disconnect', (e: AyameDisconnectEvent) => {
-          streamRef.current!.srcObject = null;
-        });
-        conn.on('addstream', async (e: AyameRTCTrackEvent) => {
+        connectionRef.current.on('addstream', async (e: AyameRTCTrackEvent) => {
           streamRef.current!.srcObject = e.stream;
           await streamRef.current!.play();
+          console.log('stream is added!');
+        });
+        connectionRef.current.on('disconnect', (e: AyameDisconnectEvent) => {
+          streamRef.current!.srcObject = null;
+          connectionRef.current = null;
+          console.log('disconnected!');
         });
 
         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-        conn.connect(mediaStream);
+        connectionRef.current.connect(mediaStream);
         props.onConnected();
-      } catch (_) {
+      } catch (e) {
+        connectionRef.current = null;
         props.onFailed();
+        throw e;
       }
     })();
   }, [props.ready]);
@@ -121,10 +115,10 @@ const MiniMe = (props: Props) => {
         playsInline
       />
       <div className='SerialJoyStick'>
-        <Joystick move={onSerialJoyStick} stop={onSerialJoyStick} />
+        <Joystick size={125} move={onSerialJoyStick} stop={onSerialJoyStick} />
       </div>
       <div className='ServoJoyStick'>
-        <Joystick move={onServoJoyStick} stop={onServoJoyStick} />
+        <Joystick size={125} move={onServoJoyStick} stop={onServoJoyStick} />
       </div>
     </div>
   );
