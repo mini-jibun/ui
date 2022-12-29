@@ -29,9 +29,9 @@ type AyameRTCTrackEvent = { stream: MediaStream } & RTCTrackEvent;
 // https://qiita.com/sotabkw/items/028800170aa17789b26e
 const MiniMe = (props: Props) => {
   const streamRef = React.useRef<HTMLVideoElement | null>(null);
-  const connectionRef = React.useRef<Connection | null>(null);
-  const serialDataChannelRef = React.useRef<RTCDataChannel | null>(null);
-  const servoDataChannelRef = React.useRef<RTCDataChannel | null>(null);
+  const isConnectingRef = React.useRef<boolean>(false);
+  const [serial, setSerial] = React.useState<RTCDataChannel | null>(null);
+  const [servo, setServo] = React.useState<RTCDataChannel | null>(null);
 
   // 参考にしました:
   // 特定の範囲を特定の範囲に変換する処理
@@ -39,7 +39,7 @@ const MiniMe = (props: Props) => {
   const map = (value: number, in_min: number, in_max: number, out_min: number, out_max: number) => Math.trunc((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 
   const onSerialJoyStick = (event: IJoystickUpdateEvent) => {
-    if (serialDataChannelRef.current === null) return;
+    if (serial === null) return;
 
     // 参考にしました:
     // 2輪ロボットの数学的モデル
@@ -56,16 +56,16 @@ const MiniMe = (props: Props) => {
     const left = map(_left, -180, 180, -255, 255);
     const right = map(_right, -180, 180, -255, 255);
 
-    serialDataChannelRef.current.send(new TextEncoder().encode(`${left},${right}$`));
+    serial.send(new TextEncoder().encode(`${left},${right}$`));
   };
 
   const onServoJoyStick = (event: IJoystickUpdateEvent) => {
-    if (servoDataChannelRef.current === null) return;
+    if (servo === null) return;
 
     const x = map(event.x! * 100, -100, 100, 0, 180);
     const y = map(event.y! * 100, -100, 100, 0, 180);
 
-    servoDataChannelRef.current.send(new TextEncoder().encode(`${x},${y}`));
+    servo.send(new TextEncoder().encode(`${x},${y}`));
   };
 
   // 参考にしました:
@@ -73,35 +73,35 @@ const MiniMe = (props: Props) => {
   // https://b.0218.jp/202207202243.html
   React.useEffect(() => {
     (async () => {
-      if (!props.ready || connectionRef.current !== null) return;
+      if (!props.ready || isConnectingRef.current) return;
+      isConnectingRef.current = true;
       try {
         const opt = Object.assign(Ayame.defaultOptions, { signalingKey: props.signalingKey });
-        connectionRef.current = Ayame.connection(props.signalingUrl, props.roomId, opt);
+        const conn = Ayame.connection(props.signalingUrl, props.roomId, opt);
 
-        connectionRef.current.on('open', async (e: AyameOpenEvent) => {
-          serialDataChannelRef.current = await connectionRef.current!.createDataChannel('serial');
-          servoDataChannelRef.current = await connectionRef.current!.createDataChannel('servo');
+        conn.on('open', async (e: AyameOpenEvent) => {
+          setSerial(await conn.createDataChannel('serial'));
+          setServo(await conn.createDataChannel('servo'));
           console.log('opened!');
         });
-        connectionRef.current.on('addstream', async (e: AyameRTCTrackEvent) => {
+        conn.on('addstream', async (e: AyameRTCTrackEvent) => {
           streamRef.current!.srcObject = e.stream;
           await streamRef.current!.play();
           console.log('stream is added!');
         });
-        connectionRef.current.on('disconnect', (e: AyameDisconnectEvent) => {
-          streamRef.current!.srcObject = null;
-          connectionRef.current = null;
+        conn.on('disconnect', (e: AyameDisconnectEvent) => {
+          isConnectingRef.current = false;
           console.log('disconnected!');
         });
 
         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-        connectionRef.current.connect(mediaStream);
+        conn.connect(mediaStream);
       } catch (e) {
-        connectionRef.current = null;
+        isConnectingRef.current = false;
         throw e;
       }
     })();
-  }, [props.ready]);
+  }, [props]);
 
   return (
     <div className='MiniMeConnection'>
