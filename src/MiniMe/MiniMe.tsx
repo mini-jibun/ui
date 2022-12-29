@@ -10,8 +10,6 @@ export interface Props {
   signalingUrl: string;
   signalingKey: string;
   roomId: string;
-  onConnected: () => void;
-  onFailed: () => void;
   onMessage: (data: string) => void;
 }
 
@@ -98,10 +96,8 @@ const MiniMe = (props: Props) => {
 
         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         connectionRef.current.connect(mediaStream);
-        props.onConnected();
       } catch (e) {
         connectionRef.current = null;
-        props.onFailed();
         throw e;
       }
     })();

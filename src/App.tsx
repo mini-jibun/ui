@@ -101,8 +101,6 @@ const App = () => {
         onRoomId={onRoomId}
       />
       <MiniMe
-        onConnected={() => {}}
-        onFailed={() => {setVisibleSignalingSetting(true)}}
         onMessage={() => {}}
         ready={isReady()}
         signalingUrl={signalingUrl}
