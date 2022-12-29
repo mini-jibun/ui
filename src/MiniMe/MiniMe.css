@@ -19,6 +19,7 @@ https://localhost8888.net/css/260/
   position: absolute;
   left: 2%;
   top: 50%;
+  transform: translateY(-50%);
   opacity: 0.5;
 }
 
@@ -26,5 +27,6 @@ https://localhost8888.net/css/260/
   position: absolute;
   right: 2%;
   top: 50%;
+  transform: translateY(-50%);
   opacity: 0.5;
 }
