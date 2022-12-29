@@ -1,6 +1,5 @@
 import React from 'react';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
-import Connection from '@open-ayame/ayame-web-sdk/dist/connection';
 import { Joystick } from 'react-joystick-component';
 import { IJoystickUpdateEvent } from 'react-joystick-component/build/lib/Joystick';
 import './MiniMe.css';
