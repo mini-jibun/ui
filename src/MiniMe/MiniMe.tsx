@@ -41,7 +41,7 @@ const MiniMe = (props: Props) => {
   const map = (value: number, in_min: number, in_max: number, out_min: number, out_max: number) => Math.trunc((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 
   const onSerialJoyStick = (x: number, y: number) => {
-    if (serial === null) return;
+    if (serial === null || serial.readyState !== 'open') return;
 
     // 参考にしました:
     // 2輪ロボットの数学的モデル
@@ -59,7 +59,7 @@ const MiniMe = (props: Props) => {
   };
 
   const onServoJoyStick = (x: number, y: number) => {
-    if (servo === null) return;
+    if (servo === null || servo.readyState !== 'open') return;
 
     const roll = 180 - map(y, -100, 100, 0, 180);
     const pitch = 180 - map(x, -100, 100, 0, 180);
