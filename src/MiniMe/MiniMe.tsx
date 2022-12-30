@@ -53,8 +53,10 @@ const MiniMe = (props: Props) => {
     const _left = isNaN(radian) ? 0 : Math.sign(y) * (velocity + d * (Math.PI / 2 - radian));
     const _right = isNaN(radian) ? 0 : Math.sign(y) * (velocity - d * (Math.PI / 2 - radian));
 
-    const left = map(_left, -180, 180, -255, 255);
-    const right = map(_right, -180, 180, -255, 255);
+    const max = 100 + d * Math.PI / 2;
+
+    const left = map(_left, -max, max, -255, 255);
+    const right = map(_right, -max, max, -255, 255);
 
     serial.send(new TextEncoder().encode(`${left},${right}$`));
   };
@@ -147,7 +149,7 @@ const MiniMe = (props: Props) => {
         <Joystick size={125} throttle={50} move={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} />
       </div>
       <div className='ServoJoyStick'>
-        <Joystick sticky={props.isStickyServo} size={125} throttle={50} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={props.isStickyServo ? () => {} : ({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
+        <Joystick sticky={props.isStickyServo} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={props.isStickyServo ? () => {} : ({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
       </div>
     </div>
   );
