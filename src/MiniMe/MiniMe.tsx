@@ -1,11 +1,12 @@
 import React from 'react';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
-import { Joystick } from 'react-joystick-component';
+import { Joystick, JoystickShape } from 'react-joystick-component';
 import { useGamepads } from 'react-gamepads';
 import './MiniMe.css';
 
 export interface Props {
-  ready: boolean;
+  isReady: boolean;
+  isStickyServo: boolean;
   signalingUrl: string;
   signalingKey: string;
   roomId: string;
@@ -104,7 +105,7 @@ const MiniMe = (props: Props) => {
   // https://b.0218.jp/202207202243.html
   React.useEffect(() => {
     (async () => {
-      if (!props.ready || isConnectingRef.current) return;
+      if (!props.isReady || isConnectingRef.current) return;
       isConnectingRef.current = true;
       try {
         const opt = Object.assign(Ayame.defaultOptions, { signalingKey: props.signalingKey });
@@ -146,7 +147,7 @@ const MiniMe = (props: Props) => {
         <Joystick size={125} throttle={50} move={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} />
       </div>
       <div className='ServoJoyStick'>
-        <Joystick size={125} throttle={50} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
+        <Joystick sticky={props.isStickyServo} size={125} throttle={50} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={props.isStickyServo ? () => {} : ({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
       </div>
     </div>
   );

@@ -103,7 +103,8 @@ const App = () => {
       <MiniMe
         onMessage={() => { }}
         onFailed={() => { setVisibleSignalingSetting(true) }}
-        ready={isReady()}
+        isReady={isReady()}
+        isStickyServo={true}
         signalingUrl={signalingUrl}
         signalingKey={signalingKey}
         roomId={roomId}
