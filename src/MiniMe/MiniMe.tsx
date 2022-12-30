@@ -143,10 +143,10 @@ const MiniMe = (props: Props) => {
         playsInline
       />
       <div className='SerialJoyStick'>
-        <Joystick size={125} move={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} />
+        <Joystick size={125} throttle={50} move={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onSerialJoyStick(x! * 100, y! * 100) }} />
       </div>
       <div className='ServoJoyStick'>
-        <Joystick size={125} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
+        <Joystick size={125} throttle={50} move={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} stop={({ x, y }) => { onServoJoyStick(x! * 100, y! * 100) }} />
       </div>
     </div>
   );
