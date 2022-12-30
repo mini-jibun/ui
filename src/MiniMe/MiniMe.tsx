@@ -58,13 +58,13 @@ const MiniMe = (props: Props) => {
     serial.send(new TextEncoder().encode(`${left},${right}$`));
   };
 
-  const onServoJoyStick = (_x: number, _y: number) => {
+  const onServoJoyStick = (x: number, y: number) => {
     if (servo === null) return;
 
-    const x = map(_x, -100, 100, 0, 180);
-    const y = map(_y, -100, 100, 0, 180);
+    const roll = 180 - map(y, -100, 100, 0, 180);
+    const pitch = 180 - map(x, -100, 100, 0, 180);
 
-    servo.send(new TextEncoder().encode(`${x},${y}`));
+    servo.send(new TextEncoder().encode(`${roll},${pitch}`));
   };
 
 
@@ -77,11 +77,11 @@ const MiniMe = (props: Props) => {
     const axes = {
       left: {
         x: Math.trunc(gamepads[0].axes[0] * 100),
-        y: Math.trunc(gamepads[0].axes[1] * 100)
+        y: -Math.trunc(gamepads[0].axes[1] * 100)
       },
       right: {
         x: Math.trunc(gamepads[0].axes[2] * 100),
-        y: Math.trunc(gamepads[0].axes[3] * 100)
+        y: -Math.trunc(gamepads[0].axes[3] * 100)
       }
     };
 
