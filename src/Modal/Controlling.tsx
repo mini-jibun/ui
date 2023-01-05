@@ -39,6 +39,20 @@ const ControllingModal = (props: ControllingModalProps) => {
       closeAriaLabel="閉じる"
       header="操縦"
       id="ControllingModal"
+      footer={
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button
+              variant="link"
+              onClick={cancel}
+            >キャンセル</Button>
+            <Button
+              variant="primary"
+              onClick={apply}
+            >適用</Button>
+          </SpaceBetween>
+        </Box>
+      }
     >
       <SpaceBetween direction="vertical" size="m">
         <SpaceBetween direction="vertical" size="xs">
@@ -66,18 +80,6 @@ const ControllingModal = (props: ControllingModalProps) => {
             onChange={({ detail }) => { setThresholdAlertSensor(Number(detail.value)) }}
           />
         </SpaceBetween>
-        <Box float="right">
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button
-              variant="link"
-              onClick={cancel}
-            >キャンセル</Button>
-            <Button
-              variant="primary"
-              onClick={apply}
-            >適用</Button>
-          </SpaceBetween>
-        </Box>
       </SpaceBetween>
     </Modal>
   );

@@ -41,6 +41,20 @@ const SignalingModal = (props: SignalingModalProps) => {
       closeAriaLabel="閉じる"
       header="シグナリング設定"
       id="SignalingModal"
+      footer={
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button
+              variant="link"
+              onClick={cancel}
+            >キャンセル</Button>
+            <Button
+              variant="primary"
+              onClick={apply}
+            >適用</Button>
+          </SpaceBetween>
+        </Box>
+      }
     >
       <SpaceBetween direction="vertical" size="m">
         <SpaceBetween direction="vertical" size="xs">
@@ -64,18 +78,6 @@ const SignalingModal = (props: SignalingModalProps) => {
             onChange={({ detail }) => { setRoomId(detail.value) }}
           />
         </SpaceBetween>
-        <Box float="right">
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button
-              variant="link"
-              onClick={cancel}
-            >キャンセル</Button>
-            <Button
-              variant="primary"
-              onClick={apply}
-            >適用</Button>
-          </SpaceBetween>
-        </Box>
       </SpaceBetween>
     </Modal>
   );

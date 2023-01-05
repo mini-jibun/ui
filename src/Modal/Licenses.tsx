@@ -19,10 +19,8 @@ const LicensesModal = (props: LicensesModalProps) => {
       header="ライセンス情報"
       size="large"
       id="LicensesModal"
-    >
-      <div style={{ whiteSpace: 'pre-wrap' }}>
+      footer={
         <SpaceBetween direction="vertical" size="m">
-          {licenses}
           <Box float="right">
             <SpaceBetween direction="horizontal" size="xs">
               <Button
@@ -32,6 +30,10 @@ const LicensesModal = (props: LicensesModalProps) => {
             </SpaceBetween>
           </Box>
         </SpaceBetween>
+      }
+    >
+      <div style={{ whiteSpace: 'pre-wrap' }}>
+        {licenses}
       </div>
     </Modal>
   );
