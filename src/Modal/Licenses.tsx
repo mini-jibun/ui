@@ -16,23 +16,24 @@ const LicensesModal = (props: LicensesModalProps) => {
       onDismiss={close}
       visible={props.visible}
       closeAriaLabel="閉じる"
-      footer={
-        <div style={{ whiteSpace: 'pre-wrap' }}>
-          <SpaceBetween direction="vertical" size="m">
-            {licenses}
-            <Box float="right">
-              <SpaceBetween direction="horizontal" size="xs">
-                <Button
-                  variant="primary"
-                  onClick={close}
-                >閉じる</Button>
-              </SpaceBetween>
-            </Box>
-          </SpaceBetween>
-        </div>
-      }
       header="ライセンス情報"
-    />
+      size="large"
+      id="LicensesModal"
+    >
+      <div style={{ whiteSpace: 'pre-wrap' }}>
+        <SpaceBetween direction="vertical" size="m">
+          {licenses}
+          <Box float="right">
+            <SpaceBetween direction="horizontal" size="xs">
+              <Button
+                variant="primary"
+                onClick={close}
+              >閉じる</Button>
+            </SpaceBetween>
+          </Box>
+        </SpaceBetween>
+      </div>
+    </Modal>
   );
 };
 

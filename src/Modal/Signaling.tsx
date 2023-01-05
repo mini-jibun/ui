@@ -39,45 +39,45 @@ const SignalingModal = (props: SignalingModalProps) => {
       onDismiss={cancel}
       visible={props.visible}
       closeAriaLabel="閉じる"
-      footer={
-        <SpaceBetween direction="vertical" size="m">
-          <SpaceBetween direction="vertical" size="xs">
-            <Box variant="p">シグナリングURL</Box>
-            <Input
-              value={signalingUrl}
-              onChange={({ detail }) => { setSignalingUrl(detail.value) }}
-            />
-          </SpaceBetween>
-          <SpaceBetween direction="vertical" size="xs">
-            <Box variant="p">シグナリングキー</Box>
-            <Input
-              value={signalingKey}
-              onChange={({ detail }) => { setSignalingKey(detail.value) }}
-            />
-          </SpaceBetween>
-          <SpaceBetween direction="vertical" size="xs">
-            <Box variant="p">ルームID</Box>
-            <Input
-              value={roomId}
-              onChange={({ detail }) => { setRoomId(detail.value) }}
-            />
-          </SpaceBetween>
-          <Box float="right">
-            <SpaceBetween direction="horizontal" size="xs">
-              <Button
-                variant="link"
-                onClick={cancel}
-              >キャンセル</Button>
-              <Button
-                variant="primary"
-                onClick={apply}
-              >適用</Button>
-            </SpaceBetween>
-          </Box>
-        </SpaceBetween>
-      }
       header="シグナリング設定"
-    />
+      id="SignalingModal"
+    >
+      <SpaceBetween direction="vertical" size="m">
+        <SpaceBetween direction="vertical" size="xs">
+          <Box variant="p">シグナリングURL</Box>
+          <Input
+            value={signalingUrl}
+            onChange={({ detail }) => { setSignalingUrl(detail.value) }}
+          />
+        </SpaceBetween>
+        <SpaceBetween direction="vertical" size="xs">
+          <Box variant="p">シグナリングキー</Box>
+          <Input
+            value={signalingKey}
+            onChange={({ detail }) => { setSignalingKey(detail.value) }}
+          />
+        </SpaceBetween>
+        <SpaceBetween direction="vertical" size="xs">
+          <Box variant="p">ルームID</Box>
+          <Input
+            value={roomId}
+            onChange={({ detail }) => { setRoomId(detail.value) }}
+          />
+        </SpaceBetween>
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button
+              variant="link"
+              onClick={cancel}
+            >キャンセル</Button>
+            <Button
+              variant="primary"
+              onClick={apply}
+            >適用</Button>
+          </SpaceBetween>
+        </Box>
+      </SpaceBetween>
+    </Modal>
   );
 };
 
