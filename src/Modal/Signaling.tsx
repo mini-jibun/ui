@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Box, SpaceBetween, Button, Input, InputProps } from '@cloudscape-design/components';
+import { Modal, Box, SpaceBetween, Button, Input } from '@cloudscape-design/components';
 
 export interface SignalingModalProps {
   visible: boolean;
