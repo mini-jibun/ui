@@ -1,5 +1,6 @@
+import React from 'react';
 import { Modal, Box, Button, SpaceBetween } from '@cloudscape-design/components';
-import licenses from '../assets/licenses.txt?raw';
+import licenses from '../assets/licenses.txt';
 
 export interface LicensesModalProps {
   visible: boolean;
@@ -7,9 +8,15 @@ export interface LicensesModalProps {
 }
 
 const LicensesModal = (props: LicensesModalProps) => {
+  const [content, setContent] = React.useState('');
+
   const close = () => {
     props.setVisible(false);
   };
+
+  fetch(licenses).then((response) => response.text()).then((text) => {
+    setContent(text);
+  });
 
   return (
     <Modal
@@ -33,7 +40,7 @@ const LicensesModal = (props: LicensesModalProps) => {
       }
     >
       <div style={{ whiteSpace: 'pre-wrap' }}>
-        {licenses}
+        {content}
       </div>
     </Modal>
   );
