@@ -6,6 +6,7 @@ import MiniMe from './MiniMe/MiniMe';
 import Logo from './assets/logo.png'
 import './App.css'
 import ControllingModal from './Modal/Controlling';
+import LicensesModal from './Modal/Licenses';
 
 interface HeaderProps {
   signalingUrl: string;
@@ -43,6 +44,10 @@ const Header = (props: HeaderProps) => {
             {
               id: "settings-controling",
               text: "操縦"
+            },
+            {
+              id: "settings-licenses",
+              text: "ライセンス情報"
             }
           ],
           onItemClick: ({ detail }) => { props.onDropdownMenuItem(detail); }
@@ -68,6 +73,7 @@ const App = () => {
   // モーダル表示状態
   const [visibleSignalingSetting, setVisibleSignalingSetting] = React.useState(false);
   const [visibleControllingSetting, setVisibleControllingSetting] = React.useState(false);
+  const [visibleLicensesModal, setVisibleLicensesModal] = React.useState(false);
 
   const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
     switch (detail.id) {
@@ -76,6 +82,9 @@ const App = () => {
         break;
       case "settings-controling":
         setVisibleControllingSetting(true);
+        break;
+      case "settings-licenses":
+        setVisibleLicensesModal(true);
         break;
       default:
         console.error(`DropdownMenu is not implemented yet!: ${detail.id}`);
@@ -113,6 +122,10 @@ const App = () => {
         setDistanceBetweenWheels={setDistanceBetweenWheels}
         setStickyCameraJoyStick={setStickyCameraJoyStick}
         setThresholdAlertSensor={setThresholdAlertSensor}
+      />
+      <LicensesModal
+        visible={visibleLicensesModal}
+        setVisible={setVisibleLicensesModal}
       />
       <MiniMe
         onMessage={() => { }}
