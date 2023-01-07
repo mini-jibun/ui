@@ -1,12 +1,13 @@
 import React from 'react'
 import { useSearchParams } from "react-router-dom";
 import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
-import SignalingModal from './Modal/Signaling';
-import MiniMe from './MiniMe/MiniMe';
+import SignalingSetting from './components/modal/signaling';
+import ControlSetting from './components/modal/control';
+import License from './components/modal/license';
+import Minime from './components/minime/minime';
 import Logo from './assets/logo.png'
 import './App.css'
-import ControllingModal from './Modal/Controlling';
-import LicensesModal from './Modal/Licenses';
+
 
 interface HeaderProps {
   signalingUrl: string;
@@ -66,14 +67,14 @@ const App = () => {
   const [roomId, setRoomId] = React.useState(searchParams.get('roomId') || '');
 
   // 車輪制御初期値
-  const [distanceBetweenWheels, setDistanceBetweenWheels] = React.useState(95);
-  const [stickyCameraJoyStick, setStickyCameraJoyStick] = React.useState(true);
+  const [wheelDistance, setDistanceBetweenWheels] = React.useState(95);
+  const [stickyCameraJoystick, setStickyCameraJoystick] = React.useState(true);
   const [thresholdAlertSensor, setThresholdAlertSensor] = React.useState(10);
 
   // モーダル表示状態
   const [visibleSignalingSetting, setVisibleSignalingSetting] = React.useState(false);
   const [visibleControllingSetting, setVisibleControllingSetting] = React.useState(false);
-  const [visibleLicensesModal, setVisibleLicensesModal] = React.useState(false);
+  const [visibleLicense, setVisibleLicense] = React.useState(false);
 
   const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
     switch (detail.id) {
@@ -84,7 +85,7 @@ const App = () => {
         setVisibleControllingSetting(true);
         break;
       case "settings-licenses":
-        setVisibleLicensesModal(true);
+        setVisibleLicense(true);
         break;
       default:
         console.error(`DropdownMenu is not implemented yet!: ${detail.id}`);
@@ -103,7 +104,7 @@ const App = () => {
         roomId={roomId}
         onDropdownMenuItem={onDropdownMenuItem}
       />
-      <SignalingModal
+      <SignalingSetting
         visible={visibleSignalingSetting || !isReady()}
         setVisible={setVisibleSignalingSetting}
         signalingUrl={signalingUrl}
@@ -113,26 +114,26 @@ const App = () => {
         setSignalingKey={setSignalingKey}
         setRoomId={setRoomId}
       />
-      <ControllingModal
+      <ControlSetting
         visible={visibleControllingSetting}
         setVisible={setVisibleControllingSetting}
-        distanceBetweenWheels={distanceBetweenWheels}
-        stickyCameraJoyStick={stickyCameraJoyStick}
+        wheelDistance={wheelDistance}
+        stickyCameraJoystick={stickyCameraJoystick}
         thresholdAlertSensor={thresholdAlertSensor}
         setDistanceBetweenWheels={setDistanceBetweenWheels}
-        setStickyCameraJoyStick={setStickyCameraJoyStick}
+        setStickyCameraJoystick={setStickyCameraJoystick}
         setThresholdAlertSensor={setThresholdAlertSensor}
       />
-      <LicensesModal
-        visible={visibleLicensesModal}
-        setVisible={setVisibleLicensesModal}
+      <License
+        visible={visibleLicense}
+        setVisible={setVisibleLicense}
       />
-      <MiniMe
+      <Minime
         onMessage={() => { }}
         onFailed={() => { setVisibleSignalingSetting(true) }}
         isReady={isReady()}
-        distanceBetweenWheels={distanceBetweenWheels}
-        stickyCameraJoyStick={stickyCameraJoyStick}
+        wheelDistance={wheelDistance}
+        stickyCameraJoystick={stickyCameraJoystick}
         thresholdAlertSensor={thresholdAlertSensor}
         signalingUrl={signalingUrl}
         signalingKey={signalingKey}

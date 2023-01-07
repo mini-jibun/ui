@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Box, SpaceBetween, Button, Input } from '@cloudscape-design/components';
 
-export interface SignalingModalProps {
+export interface SignalingSettingProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
 
@@ -16,7 +16,7 @@ export interface SignalingModalProps {
   setRoomId: (value: string) => void;
 }
 
-const SignalingModal = (props: SignalingModalProps) => {
+const SignalingSetting = (props: SignalingSettingProps) => {
   // 入力中に一時的に保持する
   const [signalingUrl, setSignalingUrl] = React.useState(props.signalingUrl);
   const [signalingKey, setSignalingKey] = React.useState(props.signalingKey);
@@ -40,7 +40,7 @@ const SignalingModal = (props: SignalingModalProps) => {
       visible={props.visible}
       closeAriaLabel="閉じる"
       header="シグナリング設定"
-      id="SignalingModal"
+      id="SignalingSetting"
       footer={
         <Box float="right">
           <SpaceBetween direction="horizontal" size="xs">
@@ -83,4 +83,4 @@ const SignalingModal = (props: SignalingModalProps) => {
   );
 };
 
-export default SignalingModal;
+export default SignalingSetting;

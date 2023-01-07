@@ -1,24 +1,24 @@
 import React from 'react';
 import { Modal, Input, Toggle, Box, SpaceBetween, Button } from '@cloudscape-design/components';
 
-export interface ControllingModalProps {
+export interface ControlSettingProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
 
   // 初期値
-  distanceBetweenWheels: number;
-  stickyCameraJoyStick: boolean;
+  wheelDistance: number;
+  stickyCameraJoystick: boolean;
   thresholdAlertSensor: number;
 
   // コールバック引数
   setDistanceBetweenWheels: (distance: number) => void;
-  setStickyCameraJoyStick: (sticky: boolean) => void;
+  setStickyCameraJoystick: (sticky: boolean) => void;
   setThresholdAlertSensor: (threshold: number) => void;
 }
 
-const ControllingModal = (props: ControllingModalProps) => {
-  const [distanceBetweenWheels, setDistanceBetweenWheels] = React.useState(props.distanceBetweenWheels);
-  const [stickyCameraJoyStick, setStickyCameraJoyStick] = React.useState(props.stickyCameraJoyStick);
+const ControlSetting = (props: ControlSettingProps) => {
+  const [wheelDistance, setDistanceBetweenWheels] = React.useState(props.wheelDistance);
+  const [stickyCameraJoystick, setStickyCameraJoystick] = React.useState(props.stickyCameraJoystick);
   const [thresholdAlertSensor, setThresholdAlertSensor] = React.useState(props.thresholdAlertSensor);
 
   const cancel = () => {
@@ -26,8 +26,8 @@ const ControllingModal = (props: ControllingModalProps) => {
   };
 
   const apply = () => {
-    props.setDistanceBetweenWheels(distanceBetweenWheels);
-    props.setStickyCameraJoyStick(stickyCameraJoyStick);
+    props.setDistanceBetweenWheels(wheelDistance);
+    props.setStickyCameraJoystick(stickyCameraJoystick);
     props.setThresholdAlertSensor(thresholdAlertSensor);
     props.setVisible(false);
   };
@@ -38,7 +38,7 @@ const ControllingModal = (props: ControllingModalProps) => {
       visible={props.visible}
       closeAriaLabel="閉じる"
       header="操縦"
-      id="ControllingModal"
+      id="ControlSetting"
       footer={
         <Box float="right">
           <SpaceBetween direction="horizontal" size="xs">
@@ -59,17 +59,17 @@ const ControllingModal = (props: ControllingModalProps) => {
           <Box variant="p">車輪間の距離(mm)</Box>
           <Input
             type="number"
-            value={props.distanceBetweenWheels.toString()}
+            value={props.wheelDistance.toString()}
             onChange={({ detail }) => { setDistanceBetweenWheels(Number(detail.value)) }}
           />
         </SpaceBetween>
         <SpaceBetween direction="vertical" size="xs">
           <Box variant="p">カメラ操縦ジョイスティックの位置保持</Box>
           <Toggle
-            onChange={({ detail }) => setStickyCameraJoyStick(detail.checked)}
-            checked={stickyCameraJoyStick}
+            onChange={({ detail }) => setStickyCameraJoystick(detail.checked)}
+            checked={stickyCameraJoystick}
           >
-            {stickyCameraJoyStick ? "有効" : "無効"}
+            {stickyCameraJoystick ? "有効" : "無効"}
           </Toggle>
         </SpaceBetween>
         <SpaceBetween direction="vertical" size="xs">
@@ -84,4 +84,4 @@ const ControllingModal = (props: ControllingModalProps) => {
     </Modal>
   );
 };
-export default ControllingModal;
+export default ControlSetting;

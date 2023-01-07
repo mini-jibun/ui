@@ -26,7 +26,7 @@ yarn
 |ビルドツール|[Vite.js](https://ja.vitejs.dev/guide/)|
 |状態管理|[React Router](https://reactrouter.com/en/main/start/tutorial)|
 |コンポーネント|[Cloudscape Design](https://cloudscape.design/)|
-|JoyStickコンポーネント|[react-joystick-component](https://github.com/elmarti/react-joystick-component)|
+|Joystickコンポーネント|[react-joystick-component](https://github.com/elmarti/react-joystick-component)|
 |Gamepad API Reactラッパー|[react-gamepads](https://github.com/whoisryosuke/react-gamepads)|
 
 cloudscape-design

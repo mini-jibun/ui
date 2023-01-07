@@ -1,4 +1,4 @@
-.MiniMeConnection {
+.MinimeConnection {
   background-color: black;
   flex: auto;
   width: 100%;
@@ -9,13 +9,13 @@
 参考
 https://localhost8888.net/css/260/
 */
-.MiniMeConnection>video {
+.MinimeConnection>video {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-.SerialJoyStick {
+.WheelJoystick {
   position: absolute;
   left: 2%;
   top: 50%;
@@ -23,7 +23,7 @@ https://localhost8888.net/css/260/
   opacity: 0.5;
 }
 
-.ServoJoyStick {
+.CameraJoystick {
   position: absolute;
   right: 2%;
   top: 50%;

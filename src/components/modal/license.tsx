@@ -1,13 +1,13 @@
 import React from 'react';
 import { Modal, Box, Button, SpaceBetween } from '@cloudscape-design/components';
-import licenses from '../assets/licenses.txt';
+import licenses from '../../assets/licenses.txt';
 
-export interface LicensesModalProps {
+export interface LicenseProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
 }
 
-const LicensesModal = (props: LicensesModalProps) => {
+const License = (props: LicenseProps) => {
   const [content, setContent] = React.useState('');
 
   const close = () => {
@@ -25,7 +25,7 @@ const LicensesModal = (props: LicensesModalProps) => {
       closeAriaLabel="閉じる"
       header="ライセンス情報"
       size="large"
-      id="LicensesModal"
+      id="License"
       footer={
         <SpaceBetween direction="vertical" size="m">
           <Box float="right">
@@ -46,4 +46,4 @@ const LicensesModal = (props: LicensesModalProps) => {
   );
 };
 
-export default LicensesModal;
+export default License;
