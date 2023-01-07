@@ -47,7 +47,7 @@ const Minime = (props: Props) => {
     servo?.send(new TextEncoder().encode(`${roll},${pitch}`));
   };
   const onCameraJoystick = (x: number | null, y: number | null) => {
-    if (x == null || y == null) return;
+    if (x === null || y === null) return;
     const { roll, pitch } = toCameraAngle(x * 100, y * 100);
     sendCameraAngle(roll, pitch);
   };
@@ -68,7 +68,7 @@ const Minime = (props: Props) => {
 
           // gamepad
           gamepadInterval = setInterval(() => {
-            if (gamepads[0] == undefined || gamepads[0].axes == undefined) return;
+            if (gamepads[0] === undefined || gamepads[0].axes === undefined) return;
             const axis = gamepads[0].axes.map((ax: number) => Math.trunc(ax * 100));
 
             const { x, y } = roundCircle(axis[0], -axis[1]); // x, y
