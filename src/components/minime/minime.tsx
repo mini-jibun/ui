@@ -58,21 +58,34 @@ const Minime = (props: Props) => {
         const conn = Ayame.connection(props.signalingUrl, props.roomId, opt);
 
         conn.on('open', async () => {
-          setSerial(await conn.createDataChannel('serial'));
-          setServo(await conn.createDataChannel('servo'));
-          if (serial !== null) serial.onmessage = (e) => {
-            console.log(e);
-            console.log(new TextDecoder().decode(e.data));
-          };
+          let channel = null;
+          channel = await conn.createDataChannel('serial')
+          if (channel !== null) {
+            channel.onmessage = (e) => {
+              console.log(new TextDecoder().decode(e.data));
+            };
+            setSerial(channel);
+          }
+          channel = await conn.createDataChannel('servo');
+          if (channel !== null) setServo(channel);
           console.log('opened!');
+        });
+        conn.on('datachannel', (channel: RTCDataChannel) => {
+          if (channel.label === 'serial') {
+            channel.onmessage = (e) => {
+              console.log(new TextDecoder().decode(e.data));
+            };
+            setSerial(channel);
+          }
+          if (channel.label === 'servo') setServo(channel);
         });
         conn.on('addstream', async (e: { stream: MediaStream } & RTCTrackEvent) => {
           streamRef.current!.srcObject = e.stream;
-          await streamRef.current!.play();
           console.log('stream is added!');
         });
         conn.on('disconnect', (e: { reason: string }) => {
           isConnectingRef.current = false;
+          streamRef.current!.srcObject = null;
           console.log('disconnected!', e.reason);
         });
 
