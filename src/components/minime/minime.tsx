@@ -27,56 +27,44 @@ const Minime = (props: Props) => {
   const isConnectingRef = React.useRef<boolean>(false);
   const [serial, setSerial] = React.useState<RTCDataChannel | null>(null);
   const [servo, setServo] = React.useState<RTCDataChannel | null>(null);
-  const [gamepads, setGamepads] = React.useState<any>({});
-  useGamepads((pads) => setGamepads(pads));
 
   const sendWheel = (left: number, right: number) => {
     if (serial?.readyState !== 'open') return;
-    console.log(left, right);
     serial?.send(new TextEncoder().encode(`${left},${right}$`));
   };
-  const onWheelJoystick = (x: number | null, y: number | null) => {
-    if (x === null || y === null) return;
-    const { left, right } = toWheelDuty(props.wheelDistance, x * 100, y * 100, 255);
-    sendWheel(left, right);
-  };
-
   const sendCameraAngle = (roll: number, pitch: number) => {
     if (servo?.readyState !== 'open') return;
-    console.log(roll, pitch);
     servo?.send(new TextEncoder().encode(`${roll},${pitch}`));
   };
-  const onCameraJoystick = (x: number | null, y: number | null) => {
-    if (x === null || y === null) return;
-    const { roll, pitch } = toCameraAngle(x * 100, y * 100);
+
+  useGamepads((pads) => {
+    // gamepad
+    if (pads[0] === undefined || pads[0].axes === undefined) return;
+    const axis = pads[0].axes.map((ax: number) => Math.trunc(ax * 100));
+
+    const { x, y } = roundCircle(axis[0], -axis[1]); // x, y
+    const { left, right } = toWheelDuty(props.wheelDistance, x, y, 255);
+    sendWheel(left, right);
+    const { roll, pitch } = toCameraAngle(axis[2], -axis[3]); // x, y
     sendCameraAngle(roll, pitch);
-  };
+  });
 
   React.useEffect(() => {
     (async () => {
       if (!props.isReady || isConnectingRef.current) return;
       isConnectingRef.current = true;
       try {
-        let gamepadInterval = 0;
-        const opt = Object.assign(Ayame.defaultOptions, { signalingKey: props.signalingKey });
+        const opt = { ...Ayame.defaultOptions, signalingKey: props.signalingKey };
         const conn = Ayame.connection(props.signalingUrl, props.roomId, opt);
 
         conn.on('open', async () => {
           setSerial(await conn.createDataChannel('serial'));
           setServo(await conn.createDataChannel('servo'));
+          if (serial !== null) serial.onmessage = (e) => {
+            console.log(e);
+            console.log(new TextDecoder().decode(e.data));
+          };
           console.log('opened!');
-
-          // gamepad
-          gamepadInterval = setInterval(() => {
-            if (gamepads[0] === undefined || gamepads[0].axes === undefined) return;
-            const axis = gamepads[0].axes.map((ax: number) => Math.trunc(ax * 100));
-
-            const { x, y } = roundCircle(axis[0], -axis[1]); // x, y
-            const { left, right } = toWheelDuty(props.wheelDistance, x * 100, y * 100, 255);
-            sendWheel(left, right);
-            const { roll, pitch } = toCameraAngle(axis[2], -axis[3]); // x, y
-            sendCameraAngle(roll, pitch);
-          }, 50);
         });
         conn.on('addstream', async (e: { stream: MediaStream } & RTCTrackEvent) => {
           streamRef.current!.srcObject = e.stream;
@@ -85,7 +73,6 @@ const Minime = (props: Props) => {
         });
         conn.on('disconnect', (e: { reason: string }) => {
           isConnectingRef.current = false;
-          if (gamepadInterval !== 0) clearInterval(gamepadInterval);
           console.log('disconnected!', e.reason);
         });
 
@@ -98,6 +85,17 @@ const Minime = (props: Props) => {
       }
     })();
   }, [props]);
+
+  const onWheelJoystick = (x: number | null, y: number | null) => {
+    if (x === null || y === null) return;
+    const { left, right } = toWheelDuty(props.wheelDistance, x * 100, y * 100, 255);
+    sendWheel(left, right);
+  };
+  const onCameraJoystick = (x: number | null, y: number | null) => {
+    if (x === null || y === null) return;
+    const { roll, pitch } = toCameraAngle(x * 100, y * 100);
+    sendCameraAngle(roll, pitch);
+  };
 
   return (
     <div className='MinimeConnection'>

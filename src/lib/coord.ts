@@ -27,8 +27,8 @@ const toCameraAngle = (x: number, y: number) => {
 
 const roundCircle = (x: number, y: number) => {
     const slope = y / x;
-    const maxX = Math.sqrt((Math.pow(radius, 2) * Math.pow(slope, 2)) / (Math.pow(slope, 2) + 1));
-    const maxY = Math.sqrt(Math.pow(radius, 2) / (Math.pow(slope, 2) + 1));
+    const maxX = Math.sqrt(Math.pow(radius + slope, 2) / (Math.pow(slope, 2) + 1));
+    const maxY = Math.sqrt(Math.pow(radius + slope, 2) / (Math.pow(slope, 2) + 1));
     const roundX = isNaN(maxX) ? x : Math.sign(x) * Math.min(Math.abs(x), maxX);
     const roundY = isNaN(maxY) ? y : Math.sign(y) * Math.min(Math.abs(y), maxY);
 
