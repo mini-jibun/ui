@@ -1,93 +1,49 @@
 import React from 'react'
 import { useSearchParams } from "react-router-dom";
-import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
+import { ButtonDropdownProps } from '@cloudscape-design/components';
 import { Header } from './components/header';
-import SignalingSetting from './components/modal/signaling';
-import ControlSetting from './components/modal/control';
-import License from './components/modal/license';
 import Minime from './components/minime/minime';
+import { defaultSetting } from './components/setting';
+import { defaultVisible } from './components/modal/visible';
 import './App.css'
+import { Modal } from './components/modal/modal';
 
 const App = () => {
   const [searchParams, _] = useSearchParams();
 
-  // シグナリング初期値
-  const [signalingUrl, setSignalingUrl] = React.useState('wss://ayame-labo.shiguredo.app/signaling');
-  const [signalingKey, setSignalingKey] = React.useState(searchParams.get('signalingKey') || '');
-  const [roomId, setRoomId] = React.useState(searchParams.get('roomId') || '');
+  const [setting, setSetting] = React.useState({...defaultSetting,
+    signalingKey: searchParams.get('signalingKey') || '',
+    roomId: searchParams.get('roomId') || ''
+  });
 
-  // 車輪制御初期値
-  const [wheelDistance, setDistanceBetweenWheels] = React.useState(95);
-  const [stickyCameraJoystick, setStickyCameraJoystick] = React.useState(true);
-  const [thresholdAlertSensor, setThresholdAlertSensor] = React.useState(10);
+  const [modalVisible, setModalVisible] = React.useState({...defaultVisible,
+    signaling: setting.signalingKey === '' || setting.roomId === ''
 
-  // モーダル表示状態
-  const [visibleSignalingSetting, setVisibleSignalingSetting] = React.useState(false);
-  const [visibleControllingSetting, setVisibleControllingSetting] = React.useState(false);
-  const [visibleLicense, setVisibleLicense] = React.useState(false);
+  });
 
   const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
-    switch (detail.id) {
-      case "settings-signaling":
-        setVisibleSignalingSetting(true);
-        break;
-      case "settings-controling":
-        setVisibleControllingSetting(true);
-        break;
-      case "settings-licenses":
-        setVisibleLicense(true);
-        break;
-      default:
-        console.error(`DropdownMenu is not implemented yet!: ${detail.id}`);
+    if (Object.keys(defaultVisible).includes(detail.id)) {
+      setModalVisible({ ...modalVisible, [detail.id]: true });
     }
-  };
-
-  const isReady = () => {
-    return signalingKey !== '' && roomId !== '';
   };
 
   return (
     <div className="App">
       <Header
-        signalingUrl={signalingUrl}
-        signalingKey={signalingKey}
-        roomId={roomId}
+        setting={setting}
         onDropdownMenuItem={onDropdownMenuItem}
       />
-      <SignalingSetting
-        visible={visibleSignalingSetting || !isReady()}
-        setVisible={setVisibleSignalingSetting}
-        signalingUrl={signalingUrl}
-        signalingKey={signalingKey}
-        roomId={roomId}
-        setSignalingUrl={setSignalingUrl}
-        setSignalingKey={setSignalingKey}
-        setRoomId={setRoomId}
-      />
-      <ControlSetting
-        visible={visibleControllingSetting}
-        setVisible={setVisibleControllingSetting}
-        wheelDistance={wheelDistance}
-        stickyCameraJoystick={stickyCameraJoystick}
-        thresholdAlertSensor={thresholdAlertSensor}
-        setDistanceBetweenWheels={setDistanceBetweenWheels}
-        setStickyCameraJoystick={setStickyCameraJoystick}
-        setThresholdAlertSensor={setThresholdAlertSensor}
-      />
-      <License
-        visible={visibleLicense}
-        setVisible={setVisibleLicense}
+      <Modal
+        visible={modalVisible}
+        setVisible={setModalVisible}
+        setting={setting}
+        setSetting={setSetting}
       />
       <Minime
+        ready={setting.signalingKey !== '' && setting.roomId !== ''}
         onMessage={() => { }}
-        onFailed={() => { setVisibleSignalingSetting(true) }}
-        isReady={isReady()}
-        wheelDistance={wheelDistance}
-        stickyCameraJoystick={stickyCameraJoystick}
-        thresholdAlertSensor={thresholdAlertSensor}
-        signalingUrl={signalingUrl}
-        signalingKey={signalingKey}
-        roomId={roomId}
+        onFailed={() => { setModalVisible({...modalVisible, signaling: true})}}
+        setting={setting}
       />
     </div>
   );

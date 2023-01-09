@@ -43,6 +43,8 @@ Ayame
     - https://js.studio-kingdom.com/typescript/handbook/advanced_types
   - OpenAyame/ayame-web-sdkのサンプル
     - https://github.com/OpenAyame/ayame-web-sdk#%E5%8F%8C%E6%96%B9%E5%90%91%E9%80%81%E5%8F%97%E4%BF%A1%E6%8E%A5%E7%B6%9A%E3%81%99%E3%82%8B
+  - ビデオをウインドウ幅でセンタリング
+    - https://localhost8888.net/css/260/
 
 useEffectを用いて非同期通信後にvideoエレメントに埋め込む
   - https://qiita.com/sotabkw/items/028800170aa17789b26e
@@ -53,3 +55,8 @@ useEffectを用いて非同期通信後にvideoエレメントに埋め込む
 
 車輪の角度制御
   - https://www.mech.tohoku-gakuin.ac.jp/rde/contents/course/robotics/wheelrobot.html
+
+TypeScript
+ - https://typescriptbook.jp/tips/generates-type-from-object-key
+
+その他MDNなど

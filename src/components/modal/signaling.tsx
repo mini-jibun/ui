@@ -1,26 +1,19 @@
 import React from 'react';
 import { Modal, Box, SpaceBetween, Button, Input } from '@cloudscape-design/components';
+import { Setting, SettingState } from '../setting';
 
 export interface SignalingSettingProps {
   visible: boolean;
   setVisible: (visible: boolean) => void;
-
-  // 初期値
-  signalingUrl: string;
-  signalingKey: string;
-  roomId: string;
-
-  // コールバック引数
-  setSignalingUrl: (value: string) => void;
-  setSignalingKey: (value: string) => void;
-  setRoomId: (value: string) => void;
+  setting: Setting;
+  setSetting: SettingState;
 }
 
 const SignalingSetting = (props: SignalingSettingProps) => {
   // 入力中に一時的に保持する
-  const [signalingUrl, setSignalingUrl] = React.useState(props.signalingUrl);
-  const [signalingKey, setSignalingKey] = React.useState(props.signalingKey);
-  const [roomId, setRoomId] = React.useState(props.roomId);
+  const [signalingUrl, setSignalingUrl] = React.useState(props.setting.signalingUrl);
+  const [signalingKey, setSignalingKey] = React.useState(props.setting.signalingKey);
+  const [roomId, setRoomId] = React.useState(props.setting.roomId);
 
   const cancel = () => {
     props.setVisible(false);
@@ -28,9 +21,7 @@ const SignalingSetting = (props: SignalingSettingProps) => {
 
   // 入力完了時の状態を引数として引数のコールバック関数を呼ぶ
   const apply = () => {
-    props.setSignalingUrl(signalingUrl);
-    props.setSignalingKey(signalingKey);
-    props.setRoomId(roomId);
+    props.setSetting({ ...props.setting, signalingUrl, signalingKey, roomId });
     props.setVisible(false);
   };
 

@@ -1,18 +1,21 @@
 import Logo from '../assets/logo.png'
 import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
+import { Setting } from './setting';
 
 export interface HeaderProps {
-  signalingUrl: string;
-  signalingKey: string;
-  roomId: string;
+  setting: Setting;
   onDropdownMenuItem: (detail: ButtonDropdownProps.ItemClickDetails) => void;
 }
 
 const Header = (props: HeaderProps) => {
+  const href = props.setting.signalingKey !== '' && props.setting.roomId !== '' ?
+    `/?signalingKey=${props.setting.signalingKey}&roomId=${props.setting.roomId}` :
+    '/';
+
   return (
     <TopNavigation
       identity={{
-        href: `/?signalingKey=${props.signalingKey}&roomId=${props.roomId}`,
+        href: href,
         title: "mini-me",
         logo: {
           src: Logo,
@@ -31,15 +34,15 @@ const Header = (props: HeaderProps) => {
           title: "設定",
           items: [
             {
-              id: "settings-signaling",
+              id: "signaling",
               text: "シグナリング"
             },
             {
-              id: "settings-controling",
+              id: "controlling",
               text: "操縦"
             },
             {
-              id: "settings-licenses",
+              id: "license",
               text: "ライセンス情報"
             }
           ],

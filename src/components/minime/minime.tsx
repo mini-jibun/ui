@@ -2,22 +2,13 @@ import React from 'react';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
 import { Joystick, JoystickShape } from 'react-joystick-component';
 import { useGamepads } from 'react-gamepads';
-import './minime.css';
 import { roundCircle, toCameraAngle, toWheelDuty } from '../../lib/coord';
+import { Setting } from '../setting';
+import './minime.css';
 
 export interface Props {
-  isReady: boolean;
-
-  wheelDistance: number;
-  stickyCameraJoystick: boolean;
-  thresholdAlertSensor: number;
-
-  // 接続情報
-  signalingUrl: string;
-  signalingKey: string;
-  roomId: string;
-
-  // 接続時のコールバック
+  ready: boolean;
+  setting: Setting;
   onFailed: () => void;
   onMessage: (data: string) => void;
 }
@@ -43,7 +34,7 @@ const Minime = (props: Props) => {
     const axis = pads[0].axes.map((ax: number) => Math.trunc(ax * 100));
 
     const { x, y } = roundCircle(axis[0], -axis[1]); // x, y
-    const { left, right } = toWheelDuty(props.wheelDistance, x, y, 255);
+    const { left, right } = toWheelDuty(props.setting.wheelDistance, x, y, 255);
     sendWheel(left, right);
     const { roll, pitch } = toCameraAngle(axis[2], -axis[3]); // x, y
     sendCameraAngle(roll, pitch);
@@ -51,11 +42,11 @@ const Minime = (props: Props) => {
 
   React.useEffect(() => {
     (async () => {
-      if (!props.isReady || isConnectingRef.current) return;
+      if (!props.ready || isConnectingRef.current) return;
       isConnectingRef.current = true;
       try {
-        const opt = { ...Ayame.defaultOptions, signalingKey: props.signalingKey };
-        const conn = Ayame.connection(props.signalingUrl, props.roomId, opt);
+        const opt = { ...Ayame.defaultOptions, signalingKey: props.setting.signalingKey };
+        const conn = Ayame.connection(props.setting.signalingUrl, props.setting.roomId, opt);
 
         conn.on('open', async () => {
           let channel = null;
@@ -97,11 +88,11 @@ const Minime = (props: Props) => {
         throw e;
       }
     })();
-  }, [props]);
+  }, [props.setting.signalingUrl, props.setting.signalingKey, props.setting.roomId]);
 
   const onWheelJoystick = (x: number | null, y: number | null) => {
     if (x === null || y === null) return;
-    const { left, right } = toWheelDuty(props.wheelDistance, x * 100, y * 100, 255);
+    const { left, right } = toWheelDuty(props.setting.wheelDistance, x * 100, y * 100, 255);
     sendWheel(left, right);
   };
   const onCameraJoystick = (x: number | null, y: number | null) => {
@@ -121,7 +112,7 @@ const Minime = (props: Props) => {
         <Joystick size={125} throttle={50} move={({ x, y }) => { onWheelJoystick(x, y) }} stop={() => { onWheelJoystick(0, 0) }} />
       </div>
       <div className='CameraJoystick'>
-        <Joystick sticky={props.stickyCameraJoystick} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => { onCameraJoystick(x, y) }} stop={props.stickyCameraJoystick ? () => { } : () => { onCameraJoystick(0, 0) }} />
+        <Joystick sticky={props.setting.cameraAngleSticky} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => { onCameraJoystick(x, y) }} stop={props.setting.cameraAngleSticky ? () => { } : () => { onCameraJoystick(0, 0) }} />
       </div>
     </div>
   );
