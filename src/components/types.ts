@@ -16,4 +16,13 @@ const defaultSetting = {
 export type Setting = typeof defaultSetting;
 export type SettingState = React.Dispatch<React.SetStateAction<Setting>>;
 
-export { defaultSetting };
+const defaultVisible = {
+    'signaling': false,
+    'controlling': false,
+    'license': false
+};
+
+export type Visible = typeof defaultVisible;
+export type VisibleState = React.Dispatch<React.SetStateAction<Visible>>;
+
+export { defaultSetting, defaultVisible };

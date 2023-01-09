@@ -1,6 +1,6 @@
 import Logo from '../assets/logo.png'
 import { TopNavigation, ButtonDropdownProps } from '@cloudscape-design/components';
-import { Setting } from './setting';
+import { Setting } from './types';
 
 export interface HeaderProps {
   setting: Setting;
@@ -46,7 +46,7 @@ const Header = (props: HeaderProps) => {
               text: "ライセンス情報"
             }
           ],
-          onItemClick: ({ detail }) => { props.onDropdownMenuItem(detail); }
+          onItemClick: ({ detail }) => props.onDropdownMenuItem(detail)
         }
       ]}
     />

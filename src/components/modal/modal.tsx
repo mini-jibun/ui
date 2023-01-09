@@ -1,6 +1,4 @@
-import React from "react";
-import { Setting, SettingState } from "../setting";
-import { Visible, VisibleState } from './visible';
+import { Setting, SettingState, Visible, VisibleState } from "../types";
 import SignalingSetting from './signaling';
 import ControlSetting from './control';
 import License from './license';
@@ -17,19 +15,19 @@ const Modal = (props: SettingProps) => {
     <>
       <SignalingSetting
         visible={props.visible.signaling}
-        setVisible={(visible) => { props.setVisible({ ...props.visible, signaling: visible }) }}
+        setVisible={(visible) => props.setVisible({ ...props.visible, signaling: visible })}
         setting={props.setting}
         setSetting={props.setSetting}
       />
       <ControlSetting
         visible={props.visible.controlling}
-        setVisible={(visible) => { props.setVisible({ ...props.visible, controlling: visible }) }}
+        setVisible={(visible) => props.setVisible({ ...props.visible, controlling: visible })}
         setting={props.setting}
         setSetting={props.setSetting}
       />
       <License
         visible={props.visible.license}
-        setVisible={(visible) => { props.setVisible({ ...props.visible, license: visible }) }}
+        setVisible={(visible) => props.setVisible({ ...props.visible, license: visible })}
       />
     </>
   );

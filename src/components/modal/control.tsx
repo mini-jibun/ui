@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Input, Toggle, Box, SpaceBetween, Button } from '@cloudscape-design/components';
-import { Setting, SettingState } from '../setting';
+import { Setting, SettingState } from '../types';
 
 export interface ControlSettingProps {
   visible: boolean;

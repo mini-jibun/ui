@@ -3,7 +3,7 @@ import * as Ayame from '@open-ayame/ayame-web-sdk';
 import { Joystick, JoystickShape } from 'react-joystick-component';
 import { useGamepads } from 'react-gamepads';
 import { roundCircle, toCameraAngle, toWheelDuty } from '../../lib/coord';
-import { Setting } from '../setting';
+import { Setting } from '../types';
 import './minime.css';
 
 export interface Props {
@@ -109,10 +109,10 @@ const Minime = (props: Props) => {
         playsInline
       />
       <div className='WheelJoystick'>
-        <Joystick size={125} throttle={50} move={({ x, y }) => { onWheelJoystick(x, y) }} stop={() => { onWheelJoystick(0, 0) }} />
+        <Joystick size={125} throttle={50} move={({ x, y }) => onWheelJoystick(x, y)} stop={() => onWheelJoystick(0, 0)} />
       </div>
       <div className='CameraJoystick'>
-        <Joystick sticky={props.setting.cameraAngleSticky} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => { onCameraJoystick(x, y) }} stop={props.setting.cameraAngleSticky ? () => { } : () => { onCameraJoystick(0, 0) }} />
+        <Joystick sticky={props.setting.cameraAngleSticky} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => onCameraJoystick(x, y)} stop={props.setting.cameraAngleSticky ? () => { } : () => onCameraJoystick(0, 0)} />
       </div>
     </div>
   );

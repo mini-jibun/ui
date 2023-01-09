@@ -2,11 +2,10 @@ import React from 'react'
 import { useSearchParams } from "react-router-dom";
 import { ButtonDropdownProps } from '@cloudscape-design/components';
 import { Header } from './components/header';
-import Minime from './components/minime/minime';
-import { defaultSetting } from './components/setting';
-import { defaultVisible } from './components/modal/visible';
-import './App.css'
 import { Modal } from './components/modal/modal';
+import Minime from './components/minime/minime';
+import { defaultSetting, defaultVisible } from './components/types';
+import './App.css'
 
 const App = () => {
   const [searchParams, _] = useSearchParams();
@@ -18,7 +17,6 @@ const App = () => {
 
   const [modalVisible, setModalVisible] = React.useState({...defaultVisible,
     signaling: setting.signalingKey === '' || setting.roomId === ''
-
   });
 
   const onDropdownMenuItem = (detail: ButtonDropdownProps.ItemClickDetails) => {
@@ -42,7 +40,7 @@ const App = () => {
       <Minime
         ready={setting.signalingKey !== '' && setting.roomId !== ''}
         onMessage={() => { }}
-        onFailed={() => { setModalVisible({...modalVisible, signaling: true})}}
+        onFailed={() => setModalVisible({...modalVisible, signaling: true})}
         setting={setting}
       />
     </div>

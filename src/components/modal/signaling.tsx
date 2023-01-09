@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Box, SpaceBetween, Button, Input } from '@cloudscape-design/components';
-import { Setting, SettingState } from '../setting';
+import { Setting, SettingState } from '../types';
 
 export interface SignalingSettingProps {
   visible: boolean;
@@ -52,21 +52,21 @@ const SignalingSetting = (props: SignalingSettingProps) => {
           <Box variant="p">シグナリングURL</Box>
           <Input
             value={signalingUrl}
-            onChange={({ detail }) => { setSignalingUrl(detail.value) }}
+            onChange={({ detail }) => setSignalingUrl(detail.value)}
           />
         </SpaceBetween>
         <SpaceBetween direction="vertical" size="xs">
           <Box variant="p">シグナリングキー</Box>
           <Input
             value={signalingKey}
-            onChange={({ detail }) => { setSignalingKey(detail.value) }}
+            onChange={({ detail }) => setSignalingKey(detail.value)}
           />
         </SpaceBetween>
         <SpaceBetween direction="vertical" size="xs">
           <Box variant="p">ルームID</Box>
           <Input
             value={roomId}
-            onChange={({ detail }) => { setRoomId(detail.value) }}
+            onChange={({ detail }) => setRoomId(detail.value)}
           />
         </SpaceBetween>
       </SpaceBetween>
