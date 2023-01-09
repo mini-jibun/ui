@@ -2,9 +2,9 @@ import React from 'react';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
 import { Joystick, JoystickShape } from 'react-joystick-component';
 import { useGamepads } from 'react-gamepads';
-import { roundCircle, toCameraAngle, toWheelDuty } from '../../lib/coord';
-import { Setting } from '../types';
-import './minime.css';
+import { AlertObjs, Alert, AlertType } from './Alert';
+import { roundCircle, toCameraAngle, toWheelDuty } from '../lib/coord';
+import { Setting } from './types';
 
 export interface Props {
   ready: boolean;
@@ -14,6 +14,12 @@ export interface Props {
 }
 
 const Minime = (props: Props) => {
+  const [alertObjs, setAlertObjs] = React.useState<AlertObjs>([]);
+  const alert = (type: AlertType, title: string, content: string) => {
+    setAlertObjs([...alertObjs, { key: Date.now().toString(), title, content, type }]);
+  }
+
+  const alertClearIntervalRef = React.useRef(0);
   const streamRef = React.useRef<HTMLVideoElement | null>(null);
   const isConnectingRef = React.useRef<boolean>(false);
   const [serial, setSerial] = React.useState<RTCDataChannel | null>(null);
@@ -26,6 +32,14 @@ const Minime = (props: Props) => {
   const sendCameraAngle = (roll: number, pitch: number) => {
     if (servo?.readyState !== 'open') return;
     servo?.send(new TextEncoder().encode(`${roll},${pitch}`));
+  };
+
+  const serialMessageCallback = (e: MessageEvent) => {
+    const sensors = new TextDecoder().decode(e.data).split(',');
+    const sensorArrange = ['前', '左', '右', '後'];
+    sensors.map((str) => parseInt(str)).map((sensor: number, index: number) => {
+      if (sensor <= props.setting.sensorAlertThreshold) alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
+    });
   };
 
   useGamepads((pads) => {
@@ -41,8 +55,22 @@ const Minime = (props: Props) => {
   });
 
   React.useEffect(() => {
+    if (alertClearIntervalRef.current !== 0) return;
+    alertClearIntervalRef.current = setInterval(() => {
+      setAlertObjs((objs: AlertObjs) => {
+        console.log('alertClear', objs);
+        return objs.slice(1);
+      });
+    }, 5000);
+  }, []);
+
+  React.useEffect(() => {
     (async () => {
-      if (!props.ready || isConnectingRef.current) return;
+      if (!props.ready) {
+        alert('warning', '接続設定を行ってください', '');
+        return;
+      }
+      if (isConnectingRef.current) return;
       isConnectingRef.current = true;
       try {
         const opt = { ...Ayame.defaultOptions, signalingKey: props.setting.signalingKey };
@@ -52,31 +80,30 @@ const Minime = (props: Props) => {
           let channel = null;
           channel = await conn.createDataChannel('serial')
           if (channel !== null) {
-            channel.onmessage = (e) => {
-              console.log(new TextDecoder().decode(e.data));
-            };
+            channel.onmessage = serialMessageCallback;
             setSerial(channel);
           }
           channel = await conn.createDataChannel('servo');
           if (channel !== null) setServo(channel);
+          alert('success', 'シグナリングサーバと接続しました', '');
           console.log('opened!');
         });
         conn.on('datachannel', (channel: RTCDataChannel) => {
           if (channel.label === 'serial') {
-            channel.onmessage = (e) => {
-              console.log(new TextDecoder().decode(e.data));
-            };
+            channel.onmessage = serialMessageCallback;
             setSerial(channel);
           }
           if (channel.label === 'servo') setServo(channel);
         });
         conn.on('addstream', async (e: { stream: MediaStream } & RTCTrackEvent) => {
           streamRef.current!.srcObject = e.stream;
+          alert('success', 'mini-meと接続しました', '');
           console.log('stream is added!');
         });
         conn.on('disconnect', (e: { reason: string }) => {
           isConnectingRef.current = false;
           streamRef.current!.srcObject = null;
+          alert('warning', 'mini-meから切断されました', '');
           console.log('disconnected!', e.reason);
         });
 
@@ -84,6 +111,7 @@ const Minime = (props: Props) => {
         await conn.connect(mediaStream);
       } catch (e) {
         isConnectingRef.current = false;
+        alert('error', 'シグナリングサーバへの接続に失敗しました', '');
         props.onFailed();
         throw e;
       }
@@ -114,7 +142,12 @@ const Minime = (props: Props) => {
       <div className='CameraJoystick'>
         <Joystick sticky={props.setting.cameraAngleSticky} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => onCameraJoystick(x, y)} stop={props.setting.cameraAngleSticky ? () => { } : () => onCameraJoystick(0, 0)} />
       </div>
-    </div>
+      <div className='MinimeAlert'>
+        <Alert
+          objs={alertObjs}
+        />
+      </div>
+    </div >
   );
 };
 export default Minime;
