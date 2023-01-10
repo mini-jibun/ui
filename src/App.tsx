@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSearchParams } from "react-router-dom";
 import { ButtonDropdownProps } from '@cloudscape-design/components';
 import { Header } from './components/header';
@@ -41,7 +41,6 @@ const App = () => {
       />
       <Minime
         ready={setting.signalingKey !== '' && setting.roomId !== ''}
-        onMessage={() => { }}
         onFailed={() => setModalVisible({ ...modalVisible, signaling: true })}
         setting={setting}
       />

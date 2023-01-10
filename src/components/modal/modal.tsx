@@ -1,11 +1,11 @@
-import { Setting, SettingState, Visible, VisibleState } from "../types";
+import { Setting, SettingState, TopNavigationVisible, TopNavigationVisibleState } from "../types";
 import SignalingSetting from './signaling';
 import ControlSetting from './control';
 import License from './license';
 
 interface SettingProps {
-  visible: Visible;
-  setVisible: VisibleState;
+  visible: TopNavigationVisible;
+  setVisible: TopNavigationVisibleState;
   setting: Setting;
   setSetting: SettingState;
 }

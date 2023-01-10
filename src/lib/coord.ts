@@ -1,6 +1,6 @@
-// https://www.arduino.cc/reference/en/language/functions/math/map/
 const radius = 100;
 
+// 引用: https://www.arduino.cc/reference/en/language/functions/math/map/
 const map = (value: number, in_min: number, in_max: number, out_min: number, out_max: number) => Math.trunc((value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 
 const toWheelDuty = (wheelDistance: number, x: number, y: number, duty_max: number) => {

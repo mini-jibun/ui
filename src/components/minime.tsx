@@ -10,7 +10,6 @@ export interface Props {
   ready: boolean;
   setting: Setting;
   onFailed: () => void;
-  onMessage: (data: string) => void;
 }
 
 const Minime = (props: Props) => {
@@ -20,12 +19,14 @@ const Minime = (props: Props) => {
     setAlertObjs([...alertObjs, { expired: Date.now() + duration, title, content, type }]);
   }
 
+  // アラートの期限が切れていないもののみフィルタして更新
   React.useEffect(() => {
     const watchdog = 100; // msec
-    setInterval(() => setAlertObjs((objs: AlertObjs) => {
-      console.log('alertClearInterval', objs);
-      return objs.filter((obj) => obj.expired > Date.now());
-    }), watchdog);
+    setInterval(() =>
+      setAlertObjs((objs: AlertObjs) =>
+        objs.filter((obj) => obj.expired > Date.now())
+      ), watchdog
+    );
   }, []);
 
   const streamRef = React.useRef<HTMLVideoElement | null>(null);
@@ -46,12 +47,13 @@ const Minime = (props: Props) => {
     const sensors = new TextDecoder().decode(e.data).split(',');
     const sensorArrange = ['前', '左', '右', '後'];
     sensors.map((str) => parseInt(str)).map((sensor: number, index: number) => {
-      if (sensor <= props.setting.sensorAlertThreshold) alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
+      if (sensor <= props.setting.sensorAlertThreshold)
+        alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
     });
   };
 
+  // ゲームパッド
   useGamepads((pads) => {
-    // gamepad
     if (pads[0] === undefined || pads[0].axes === undefined) return;
     const axis = pads[0].axes.map((ax: number) => Math.trunc(ax * 100));
 
@@ -62,10 +64,11 @@ const Minime = (props: Props) => {
     sendCameraAngle(roll, pitch);
   });
 
+  // Ayame Laboと接続する
   React.useEffect(() => {
     (async () => {
       if (!props.ready) {
-        alert('warning', '接続設定を行ってください', '');
+        alert('warning', 'シグナリング設定を行ってください', '');
         return;
       }
       if (isConnectingRef.current) return;
@@ -121,11 +124,14 @@ const Minime = (props: Props) => {
     const { left, right } = toWheelDuty(props.setting.wheelDistance, x * 100, y * 100, 255);
     sendWheel(left, right);
   };
+  const stopWheelJoystick = () => onWheelJoystick(0, 0);
+
   const onCameraJoystick = (x: number | null, y: number | null) => {
     if (x === null || y === null) return;
     const { roll, pitch } = toCameraAngle(x * 100, y * 100);
     sendCameraAngle(roll, pitch);
   };
+  const stopCameraJoystick = () => props.setting.cameraAngleSticky ? {} : onCameraJoystick(0, 0);
 
   return (
     <div className='MinimeConnection'>
@@ -135,10 +141,22 @@ const Minime = (props: Props) => {
         playsInline
       />
       <div className='WheelJoystick'>
-        <Joystick size={125} throttle={50} move={({ x, y }) => onWheelJoystick(x, y)} stop={() => onWheelJoystick(0, 0)} />
+        <Joystick
+          size={125}
+          throttle={50}
+          move={({ x, y }) => onWheelJoystick(x, y)}
+          stop={stopWheelJoystick}
+        />
       </div>
       <div className='CameraJoystick'>
-        <Joystick sticky={props.setting.cameraAngleSticky} controlPlaneShape={JoystickShape.Square} size={125} throttle={50} move={({ x, y }) => onCameraJoystick(x, y)} stop={props.setting.cameraAngleSticky ? () => { } : () => onCameraJoystick(0, 0)} />
+        <Joystick
+          sticky={props.setting.cameraAngleSticky}
+          controlPlaneShape={JoystickShape.Square}
+          size={125}
+          throttle={50}
+          move={({ x, y }) => onCameraJoystick(x, y)}
+          stop={stopCameraJoystick}
+        />
       </div>
       <div className='MinimeAlert'>
         <Alert

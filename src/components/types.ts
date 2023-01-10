@@ -17,12 +17,12 @@ export type Setting = typeof defaultSetting;
 export type SettingState = React.Dispatch<React.SetStateAction<Setting>>;
 
 const defaultVisible = {
-    'signaling': false,
-    'controlling': false,
-    'license': false
+    signaling: false,
+    controlling: false,
+    license: false
 };
 
-export type Visible = typeof defaultVisible;
-export type VisibleState = React.Dispatch<React.SetStateAction<Visible>>;
+export type TopNavigationVisible = typeof defaultVisible;
+export type TopNavigationVisibleState = React.Dispatch<React.SetStateAction<TopNavigationVisible>>;
 
 export { defaultSetting, defaultVisible };
