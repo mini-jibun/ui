@@ -103,7 +103,7 @@ const Minime = (props: Props) => {
         conn.on('disconnect', (e: { reason: string }) => {
           isConnectingRef.current = false;
           streamRef.current!.srcObject = null;
-          alert('warning', 'mini-meから切断されました', '');
+          alert('warning', 'mini-meから切断されました', '再接続するには､リロードを行ってください');
           console.log('disconnected!', e.reason);
         });
 
