@@ -2,7 +2,7 @@ import { Alert as CloudscapeAlert } from "@cloudscape-design/components";
 
 export type AlertType = 'info' | 'warning' | 'error' | 'success';
 export interface AlertObj {
-  key: string;
+  expired: number;
   title: string;
   content: string;
   type: AlertType;
@@ -20,7 +20,7 @@ const Alert = (props: AlertProps) => {
       {props.objs.filter((obj) => obj !== null).map(obj => {
         return (
           <CloudscapeAlert
-            key={obj!.key}
+            key={obj!.expired}
             type={obj!.type}
             header={obj!.title}
           >

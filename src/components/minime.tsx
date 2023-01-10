@@ -16,10 +16,18 @@ export interface Props {
 const Minime = (props: Props) => {
   const [alertObjs, setAlertObjs] = React.useState<AlertObjs>([]);
   const alert = (type: AlertType, title: string, content: string) => {
-    setAlertObjs([...alertObjs, { key: Date.now().toString(), title, content, type }]);
+    const duration = 5000; // msec
+    setAlertObjs([...alertObjs, { expired: Date.now() + duration, title, content, type }]);
   }
 
-  const alertClearIntervalRef = React.useRef(0);
+  React.useEffect(() => {
+    const watchdog = 100; // msec
+    setInterval(() => setAlertObjs((objs: AlertObjs) => {
+      console.log('alertClearInterval', objs);
+      return objs.filter((obj) => obj.expired > Date.now());
+    }), watchdog);
+  }, []);
+
   const streamRef = React.useRef<HTMLVideoElement | null>(null);
   const isConnectingRef = React.useRef<boolean>(false);
   const [serial, setSerial] = React.useState<RTCDataChannel | null>(null);
@@ -53,16 +61,6 @@ const Minime = (props: Props) => {
     const { roll, pitch } = toCameraAngle(axis[2], -axis[3]); // x, y
     sendCameraAngle(roll, pitch);
   });
-
-  React.useEffect(() => {
-    if (alertClearIntervalRef.current !== 0) return;
-    alertClearIntervalRef.current = setInterval(() => {
-      setAlertObjs((objs: AlertObjs) => {
-        console.log('alertClear', objs);
-        return objs.slice(1);
-      });
-    }, 5000);
-  }, []);
 
   React.useEffect(() => {
     (async () => {
