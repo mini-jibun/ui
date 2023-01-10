@@ -12,6 +12,15 @@ const Header = (props: HeaderProps) => {
     `/?signalingKey=${props.setting.signalingKey}&roomId=${props.setting.roomId}` :
     '/';
 
+  // 引用: https://developer.mozilla.org/ja/docs/Web/API/Fullscreen_API#%E5%85%A8%E7%94%BB%E9%9D%A2%E3%83%A2%E3%83%BC%E3%83%89%E3%81%AE%E5%88%87%E3%82%8A%E6%9B%BF%E3%81%88
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  };
+
   return (
     <TopNavigation
       identity={{
@@ -27,6 +36,13 @@ const Header = (props: HeaderProps) => {
         overflowMenuTitleText: "All"
       }}
       utilities={[
+        {
+          type: "button",
+          iconName: "view-full",
+          ariaLabel: "fullscreen",
+          title: "fullscreen",
+          onClick: toggleFullscreen
+        },
         {
           type: "menu-dropdown",
           iconName: "settings",
