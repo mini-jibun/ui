@@ -2,7 +2,7 @@ import React from 'react';
 import * as Ayame from '@open-ayame/ayame-web-sdk';
 import { Joystick, JoystickShape } from 'react-joystick-component';
 import { useGamepads } from 'react-gamepads';
-import { AlertObjs, Alert, AlertType } from './Alert';
+import { AlertObjs, Alert, AlertType } from './alert';
 import { roundCircle, toCameraAngle, toWheelDuty } from '../lib/coord';
 import { Setting } from './types';
 
