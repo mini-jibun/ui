@@ -59,6 +59,10 @@ useEffectを用いて非同期通信後にvideoエレメントに埋め込む
 TypeScript
  - https://typescriptbook.jp/tips/generates-type-from-object-key
 
+PWA化
+  - https://software.pitang1965.com/2022/04/23/how-to-make-a-vite-react-typescript-project-a-pwa/
+  - https://www.simicart.com/manifest-generator.html/
+
 その他MDNなど
  - 全画面モード
   - https://developer.mozilla.org/ja/docs/Web/API/Fullscreen_API#%E5%85%A8%E7%94%BB%E9%9D%A2%E3%83%A2%E3%83%BC%E3%83%89%E3%81%AE%E5%88%87%E3%82%8A%E6%9B%BF%E3%81%88
