@@ -10,7 +10,7 @@ export interface ControlSettingProps {
 }
 
 const ControlSetting = (props: ControlSettingProps) => {
-  const [wheelDistance, setDistanceBetweenWheels] = React.useState(props.setting.wheelDistance);
+  const [wheelDistance, setWheelDistance] = React.useState(props.setting.wheelDistance);
   const [cameraAngleSticky, setCameraAngleSticky] = React.useState(props.setting.cameraAngleSticky);
   const [sensorAlertThreshold, setThresholdAlertSensor] = React.useState(props.setting.sensorAlertThreshold);
 
@@ -53,8 +53,8 @@ const ControlSetting = (props: ControlSettingProps) => {
           <Box variant="p">車輪間の距離(mm)</Box>
           <Input
             type="number"
-            value={props.setting.wheelDistance.toString()}
-            onChange={({ detail }) => { setDistanceBetweenWheels(Number(detail.value)) }}
+            value={wheelDistance.toString()}
+            onChange={({ detail }) => { setWheelDistance(Number(detail.value)) }}
           />
         </SpaceBetween>
         <SpaceBetween direction="vertical" size="xs">
@@ -70,7 +70,7 @@ const ControlSetting = (props: ControlSettingProps) => {
           <Box variant="p">アラートを出すセンサしきい値</Box>
           <Input
             type="number"
-            value={props.setting.sensorAlertThreshold.toString()}
+            value={sensorAlertThreshold.toString()}
             onChange={({ detail }) => { setThresholdAlertSensor(Number(detail.value)) }}
           />
         </SpaceBetween>
