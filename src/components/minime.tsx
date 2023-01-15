@@ -45,6 +45,7 @@ const Minime = (props: Props) => {
 
   const serialMessageCallback = (e: MessageEvent) => {
     const sensors = new TextDecoder().decode(e.data).split(',');
+    console.log(sensors);
     const sensorArrange = ['前', '左', '右', '後'];
     sensors.map((str) => parseInt(str)).map((sensor: number, index: number) => {
       if (sensor <= props.setting.sensorAlertThreshold)
