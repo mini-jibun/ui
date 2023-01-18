@@ -83,6 +83,7 @@ const Minime = (props: Props) => {
           channel = await conn.createDataChannel('serial')
           if (channel !== null) {
             channel.onmessage = serialMessageCallback;
+            channel.send(new TextEncoder().encode('c')); // キャリブレーション
             setSerial(channel);
           }
           channel = await conn.createDataChannel('servo');
@@ -93,6 +94,7 @@ const Minime = (props: Props) => {
         conn.on('datachannel', (channel: RTCDataChannel) => {
           if (channel.label === 'serial') {
             channel.onmessage = serialMessageCallback;
+            channel.send(new TextEncoder().encode('c')); // キャリブレーション
             setSerial(channel);
           }
           if (channel.label === 'servo') setServo(channel);
