@@ -53,7 +53,7 @@ const Minime = (props: Props) => {
     });
   };
   const onSerialConnection = (ev: any) => {
-    (ev as RTCDataChannelEvent).channel.send(new TextEncoder().encode('c'));
+    ((ev as Event).currentTarget as RTCDataChannel).send(new TextEncoder().encode('c'));
   }
 
   // ゲームパッド
