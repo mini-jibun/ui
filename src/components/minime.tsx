@@ -52,6 +52,9 @@ const Minime = (props: Props) => {
         alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
     });
   };
+  const onSerialConnection = (ev: any) => {
+    (ev as RTCDataChannelEvent).channel.send(new TextEncoder().encode('c'));
+  }
 
   // ゲームパッド
   useGamepads((pads) => {
@@ -83,7 +86,7 @@ const Minime = (props: Props) => {
           channel = await conn.createDataChannel('serial')
           if (channel !== null) {
             channel.onmessage = serialMessageCallback;
-            channel.send(new TextEncoder().encode('c')); // キャリブレーション
+            channel.onopen = onSerialConnection; // キャリブレーション
             setSerial(channel);
           }
           channel = await conn.createDataChannel('servo');
@@ -94,7 +97,7 @@ const Minime = (props: Props) => {
         conn.on('datachannel', (channel: RTCDataChannel) => {
           if (channel.label === 'serial') {
             channel.onmessage = serialMessageCallback;
-            channel.send(new TextEncoder().encode('c')); // キャリブレーション
+            channel.onopen = onSerialConnection; // キャリブレーション
             setSerial(channel);
           }
           if (channel.label === 'servo') setServo(channel);
