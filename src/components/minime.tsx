@@ -35,11 +35,11 @@ const Minime = (props: Props) => {
   const [servo, setServo] = React.useState<RTCDataChannel | null>(null);
 
   const sendWheel = (left: number, right: number) => {
-    if (serial?.readyState !== 'open') return;
+    if (serial === null || serial?.readyState !== 'open') return;
     serial?.send(new TextEncoder().encode(`${left},${right}$`));
   };
   const sendCameraAngle = (roll: number, pitch: number) => {
-    if (servo?.readyState !== 'open') return;
+    if (servo === null || servo?.readyState !== 'open') return;
     servo?.send(new TextEncoder().encode(`${roll},${pitch}`));
   };
 
@@ -48,8 +48,9 @@ const Minime = (props: Props) => {
     console.log(sensors);
     const sensorArrange = ['前', '左', '右', '後'];
     sensors.map((sensor: string, index: number) => {
-      if (sensor === '1')
-        alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
+      const loc = sensorArrange[index];
+      if (loc !== undefined && sensor === '1')
+        alert('warning', `${loc}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
     });
   };
   const onSerialConnection = (ev: any) => {
@@ -124,6 +125,15 @@ const Minime = (props: Props) => {
       }
     })();
   }, [props.setting.signalingUrl, props.setting.signalingKey, props.setting.roomId]);
+
+  React.useEffect(() => {
+    if (serial === null || serial?.readyState !== 'open') return;
+    if (props.setting.safety) {
+      serial.send(new TextEncoder().encode('c'));
+    } else {
+      serial.send(new TextEncoder().encode('s'));
+    }
+  }, [props.setting.safety]);
 
   const onWheelJoystick = (x: number | null, y: number | null) => {
     if (x === null || y === null) return;

@@ -8,7 +8,9 @@ const defaultSetting = {
     // 本体の車輪間の距離[mm]
     wheelDistance: 95,
     // カメラ角度を維持するかどうか
-    cameraAngleSticky: true
+    cameraAngleSticky: true,
+    // 落下防止停止を有効にするかどうか
+    safety: true
 };
 
 export type Setting = typeof defaultSetting;

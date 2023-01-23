@@ -12,6 +12,7 @@ export interface ControlSettingProps {
 const ControlSetting = (props: ControlSettingProps) => {
   const [wheelDistance, setWheelDistance] = React.useState(props.setting.wheelDistance);
   const [cameraAngleSticky, setCameraAngleSticky] = React.useState(props.setting.cameraAngleSticky);
+  const [safety, setSafety] = React.useState(props.setting.safety);
 
   const cancel = () => {
     props.setVisible(false);
@@ -63,6 +64,15 @@ const ControlSetting = (props: ControlSettingProps) => {
             checked={cameraAngleSticky}
           >
             {cameraAngleSticky ? "有効" : "無効"}
+          </Toggle>
+        </SpaceBetween>
+        <SpaceBetween direction="vertical" size="xs">
+          <Box variant="p">落下防止停止機能</Box>
+          <Toggle
+            onChange={({ detail }) => setSafety(detail.checked)}
+            checked={safety}
+          >
+            {safety ? "有効" : "無効"}
           </Toggle>
         </SpaceBetween>
       </SpaceBetween>
