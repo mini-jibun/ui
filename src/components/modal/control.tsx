@@ -21,7 +21,7 @@ const ControlSetting = (props: ControlSettingProps) => {
   const apply = () => {
     props.setSetting({
       ...props.setting,
-      wheelDistance, cameraAngleSticky
+      wheelDistance, cameraAngleSticky, safety
     });
     props.setVisible(false);
   };
