@@ -47,8 +47,8 @@ const Minime = (props: Props) => {
     const sensors = new TextDecoder().decode(e.data).split(',');
     console.log(sensors);
     const sensorArrange = ['前', '左', '右', '後'];
-    sensors.map((str) => parseInt(str)).map((sensor: number, index: number) => {
-      if (sensor <= props.setting.sensorAlertThreshold)
+    sensors.map((sensor: string, index: number) => {
+      if (sensor === '1')
         alert('warning', `${sensorArrange[index]}の落下防止センサーが反応しています`, `安全な方向に移動してください`);
     });
   };

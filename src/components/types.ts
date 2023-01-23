@@ -8,9 +8,7 @@ const defaultSetting = {
     // 本体の車輪間の距離[mm]
     wheelDistance: 95,
     // カメラ角度を維持するかどうか
-    cameraAngleSticky: true,
-    // アラートを出すセンサしきい値
-    sensorAlertThreshold: 10
+    cameraAngleSticky: true
 };
 
 export type Setting = typeof defaultSetting;

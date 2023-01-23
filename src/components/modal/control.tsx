@@ -12,7 +12,6 @@ export interface ControlSettingProps {
 const ControlSetting = (props: ControlSettingProps) => {
   const [wheelDistance, setWheelDistance] = React.useState(props.setting.wheelDistance);
   const [cameraAngleSticky, setCameraAngleSticky] = React.useState(props.setting.cameraAngleSticky);
-  const [sensorAlertThreshold, setThresholdAlertSensor] = React.useState(props.setting.sensorAlertThreshold);
 
   const cancel = () => {
     props.setVisible(false);
@@ -21,7 +20,7 @@ const ControlSetting = (props: ControlSettingProps) => {
   const apply = () => {
     props.setSetting({
       ...props.setting,
-      wheelDistance, cameraAngleSticky, sensorAlertThreshold
+      wheelDistance, cameraAngleSticky
     });
     props.setVisible(false);
   };
@@ -65,14 +64,6 @@ const ControlSetting = (props: ControlSettingProps) => {
           >
             {cameraAngleSticky ? "有効" : "無効"}
           </Toggle>
-        </SpaceBetween>
-        <SpaceBetween direction="vertical" size="xs">
-          <Box variant="p">アラートを出すセンサしきい値</Box>
-          <Input
-            type="number"
-            value={sensorAlertThreshold.toString()}
-            onChange={({ detail }) => { setThresholdAlertSensor(Number(detail.value)) }}
-          />
         </SpaceBetween>
       </SpaceBetween>
     </Modal>
